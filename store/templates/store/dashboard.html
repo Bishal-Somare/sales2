@@ -9,239 +9,55 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
     <!-- Main content -->
     <div class="h-screen flex-grow-1 overflow-y-lg-auto">
-        <!-- Enhanced Notification System -->
-        <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;" id="notificationArea">
-            <div class="dropdown">
-                <button class="btn btn-light position-relative notification-btn shadow-sm" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fa fa-bell"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger pulse-animation" id="notificationCounter">
-                        3
-                    </span>
-                </button>
-                <div class="dropdown-menu dropdown-menu-end shadow notification-dropdown" aria-labelledby="notificationDropdown">
-                    <div class="notification-header d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0 ps-3 py-2">Notifications</h6>
-                        <span class="badge bg-primary rounded-pill me-3" id="notificationCounterHeader">3</span>
-                    </div>
-                    <div class="notification-divider"></div>
-                    <div id="notificationContainer" class="notification-scrollable">
-                        <div class="notification-item" data-notification-id="1">
-                            <div class="d-flex align-items-center py-2 px-3 notification-content">
-                                <div class="notification-icon bg-info">
-                                    <i class="fa fa-truck text-white"></i>
-                                </div>
-                                <div class="flex-grow-1 ps-3">
-                                    <p class="mb-0 notification-title">New delivery scheduled</p>
-                                    <p class="mb-0 notification-text">Your delivery is set for tomorrow</p>
-                                    <small class="text-muted notification-time"><i class="fa fa-clock-o me-1"></i>5 minutes ago</small>
-                                </div>
-                                <button class="btn btn-sm text-danger dismiss-notification" data-notification-id="1">
-                                    <i class="fa fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="notification-item" data-notification-id="2">
-                            <div class="d-flex align-items-center py-2 px-3 notification-content">
-                                <div class="notification-icon bg-warning">
-                                    <i class="fa fa-exclamation-triangle text-white"></i>
-                                </div>
-                                <div class="flex-grow-1 ps-3">
-                                    <p class="mb-0 notification-title">Inventory Alert</p>
-                                    <p class="mb-0 notification-text">Product #123 is running low</p>
-                                    <small class="text-muted notification-time"><i class="fa fa-clock-o me-1"></i>1 hour ago</small>
-                                </div>
-                                <button class="btn btn-sm text-danger dismiss-notification" data-notification-id="2">
-                                    <i class="fa fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="notification-item" data-notification-id="3">
-                            <div class="d-flex align-items-center py-2 px-3 notification-content">
-                                <div class="notification-icon bg-success">
-                                    <i class="fa fa-user-plus text-white"></i>
-                                </div>
-                                <div class="flex-grow-1 ps-3">
-                                    <p class="mb-0 notification-title">New Staff Member</p>
-                                    <p class="mb-0 notification-text">Profile created successfully</p>
-                                    <small class="text-muted notification-time"><i class="fa fa-clock-o me-1"></i>3 hours ago</small>
-                                </div>
-                                <button class="btn btn-sm text-danger dismiss-notification" data-notification-id="3">
-                                    <i class="fa fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="notification-divider"></div>
-                    <div class="notification-footer">
-                        <a class="dropdown-item text-center text-primary py-2" href="#" id="clearAllNotifications">
-                            Clear all notifications
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
         <!-- Main -->
-        <main class="py-6 bg-surface-secondary">
-            <div class="container-fluid">
-                <!-- Card stats -->
-                <div class="row g-6 mb-6">
+        <main class="py-3 py-md-5 bg-surface-secondary">
+            <div class="container-fluid px-2 px-md-4">
+                <!-- Card stats - More responsive grid system -->
+                <div class="row g-2 g-md-4 mb-4">
                     <style>
                         a {
                             text-decoration: none;
                         }
                         
-                        /* Notification System Styling */
-                        .notification-btn {
-                            width: 45px;
-                            height: 45px;
-                            border-radius: 50%;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            transition: all 0.3s;
-                            border: none;
-                            background-color: white;
+                        /* Make cards more responsive */
+                        .card {
+                            height: 100%;
+                            transition: transform 0.2s;
                         }
                         
-                        .notification-btn:hover {
-                            background-color: #f8f9fa;
-                            transform: translateY(-2px);
+                        .card:hover {
+                            transform: translateY(-5px);
                         }
                         
-                        .notification-dropdown {
-                            width: 350px;
-                            padding: 0;
-                            border: none;
-                            border-radius: 0.5rem;
-                            overflow: hidden;
-                        }
-                        
-                        .notification-header {
-                            background-color: #f8f9fa;
-                            padding: 10px 0;
-                        }
-                        
-                        .notification-divider {
-                            height: 1px;
-                            background-color: #e9ecef;
-                            margin: 0;
-                        }
-                        
-                        .notification-scrollable {
-                            max-height: 300px;
-                            overflow-y: auto;
-                        }
-                        
-                        .notification-item {
-                            border-bottom: 1px solid #f1f1f1;
-                            transition: background-color 0.3s;
-                        }
-                        
-                        .notification-item:hover {
-                            background-color: #f8f9fa;
-                        }
-                        
-                        .notification-content {
-                            position: relative;
-                        }
-                        
-                        .notification-icon {
-                            width: 40px;
-                            height: 40px;
-                            border-radius: 50%;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                        }
-                        
-                        .notification-title {
-                            font-size: 14px;
-                            font-weight: 600;
-                            color: #344767;
-                        }
-                        
-                        .notification-text {
-                            font-size: 13px;
-                            color: #67748e;
-                        }
-                        
-                        .notification-time {
-                            font-size: 11px;
-                        }
-                        
-                        .notification-footer {
-                            background-color: #f8f9fa;
-                        }
-                        
-                        .notification-footer a:hover {
-                            background-color: #e9ecef;
-                        }
-                        
-                        .dismiss-notification {
-                            background: none;
-                            border: none;
-                            padding: 5px;
-                            opacity: 0.5;
-                            transition: opacity 0.3s;
-                        }
-                        
-                        .dismiss-notification:hover {
-                            opacity: 1;
-                        }
-                        
-                        /* Notification badge animation */
-                        .pulse-animation {
-                            animation: pulse 1.5s infinite;
-                        }
-                        
-                        @keyframes pulse {
-                            0% {
-                                transform: translate(50%, -50%) scale(0.95);
-                                box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+                        /* Adjust icon sizes for different screens */
+                        @media (max-width: 767.98px) {
+                            .icon-shape {
+                                width: 40px;
+                                height: 40px;
+                                font-size: 1rem;
                             }
                             
-                            70% {
-                                transform: translate(50%, -50%) scale(1);
-                                box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+                            .h3 {
+                                font-size: 1.5rem;
                             }
                             
-                            100% {
-                                transform: translate(50%, -50%) scale(0.95);
-                                box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+                            .h6 {
+                                font-size: 0.8rem;
                             }
-                        }
-                        
-                        /* Styling for scrollbar in notification dropdown */
-                        .notification-scrollable::-webkit-scrollbar {
-                            width: 5px;
-                        }
-                        
-                        .notification-scrollable::-webkit-scrollbar-track {
-                            background: #f1f1f1;
-                        }
-                        
-                        .notification-scrollable::-webkit-scrollbar-thumb {
-                            background: #c1c1c1;
-                            border-radius: 5px;
-                        }
-                        
-                        .notification-scrollable::-webkit-scrollbar-thumb:hover {
-                            background: #a1a1a1;
                         }
                     </style>
-                    
-                    <div class="col-xl-3 col-sm-6 col-12" id="products">
+                    <!-- Products Card - Col-12 on xs, col-6 on sm, col-3 on xl -->
+                    <div class="col-12 col-sm-6 col-xl-3" id="products">
                         <a href="{% url 'productslist' %}">
                             <div class="card shadow border-0">
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col-8 col-sm-7">
                                             <span class="h6 font-semibold text-muted text-sm d-block mb-2">Products</span>
                                             <span class="h3 font-bold mb-0">{{total_items}}</span>
                                         </div>
-                                        <div class="col-auto">
-                                            <div class="icon icon-shape bg-tertiary text-white text-lg rounded-circle">
+                                        <div class="col-4 col-sm-5 text-end">
+                                            <div class="icon icon-shape bg-tertiary text-white text-lg rounded-circle d-inline-flex align-items-center justify-content-center">
                                                 <i class="fa fa-clipboard-list"></i>
                                             </div>
                                         </div>
@@ -256,17 +72,19 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-xl-3 col-sm-6 col-12" id="profiles">
+                    
+                    <!-- Staff Card -->
+                    <div class="col-12 col-sm-6 col-xl-3" id="profiles">
                         <a href="{% url 'profile_list' %}">
                             <div class="card shadow border-0">
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col-8 col-sm-7">
                                             <span class="h6 font-semibold text-muted text-sm d-block mb-2">Staff</span>
                                             <span class="h3 font-bold mb-0">{{profiles_count}}</span>
                                         </div>
-                                        <div class="col-auto">
-                                            <div class="icon icon-shape bg-primary text-white text-lg rounded-circle">
+                                        <div class="col-4 col-sm-5 text-end">
+                                            <div class="icon icon-shape bg-primary text-white text-lg rounded-circle d-inline-flex align-items-center justify-content-center">
                                                 <i class="fa-solid fa fa-users"></i>
                                             </div>
                                         </div>
@@ -281,17 +99,19 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-xl-3 col-sm-6 col-12" id="deliveries">
+                    
+                    <!-- Deliveries Card -->
+                    <div class="col-12 col-sm-6 col-xl-3" id="deliveries">
                         <a href="{% url 'deliveries' %}">
                             <div class="card shadow border-0">
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col-8 col-sm-7">
                                             <span class="h6 font-semibold text-muted text-sm d-block mb-2">Pending deliveries</span>
                                             <span class="h3 font-bold mb-0">{{delivery.count}}</span>
                                         </div>
-                                        <div class="col-auto">
-                                            <div class="icon icon-shape bg-info text-white text-lg rounded-circle">
+                                        <div class="col-4 col-sm-5 text-end">
+                                            <div class="icon icon-shape bg-info text-white text-lg rounded-circle d-inline-flex align-items-center justify-content-center">
                                                 <i class="fa fa-truck"></i>
                                             </div>
                                         </div>
@@ -306,17 +126,19 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-xl-3 col-sm-6 col-12" id="sales">
+                    
+                    <!-- Sales Card -->
+                    <div class="col-12 col-sm-6 col-xl-3" id="sales">
                         <a href="{% url 'saleslist' %}">
                             <div class="card shadow border-0">
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col-8 col-sm-7">
                                             <span class="h6 font-semibold text-muted text-sm d-block mb-2">Sales</span>
                                             <span class="h3 font-bold mb-0">{{sales.count}}</span>
                                         </div>
-                                        <div class="col-auto">
-                                            <div class="icon icon-shape bg-warning text-white text-lg rounded-circle">
+                                        <div class="col-4 col-sm-5 text-end">
+                                            <div class="icon icon-shape bg-warning text-white text-lg rounded-circle d-inline-flex align-items-center justify-content-center">
                                                 <i class="fa fa-shopping-cart"></i>
                                             </div>
                                         </div>
@@ -332,90 +154,13 @@
                         </a>
                     </div>
                 </div>
-                {% include 'store/charts.html' %}
+                
+                <!-- Charts Section - Responsive container -->
+                <div class="chart-container mt-4 mb-4">
+                    {% include 'store/charts.html' %}
+                </div>
             </div>
         </main>
     </div>
 </div>
-
-<!-- Enhanced Notification JavaScript -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Handle dismissing individual notifications
-        document.querySelectorAll('.dismiss-notification').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const notificationId = this.getAttribute('data-notification-id');
-                const notificationItem = document.querySelector(`.notification-item[data-notification-id="${notificationId}"]`);
-                
-                if (notificationItem) {
-                    // Add fade-out animation
-                    notificationItem.style.transition = 'opacity 0.3s, height 0.3s';
-                    notificationItem.style.opacity = '0';
-                    
-                    // Remove after animation completes
-                    setTimeout(() => {
-                        notificationItem.remove();
-                        updateNotificationCounter();
-                    }, 300);
-                }
-            });
-        });
-        
-        // Handle clearing all notifications
-        document.getElementById('clearAllNotifications').addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            const notificationItems = document.querySelectorAll('.notification-item');
-            
-            // Fade out all notifications
-            notificationItems.forEach(item => {
-                item.style.transition = 'opacity 0.3s';
-                item.style.opacity = '0';
-            });
-            
-            // Clear all after animation completes
-            setTimeout(() => {
-                const notificationContainer = document.getElementById('notificationContainer');
-                notificationContainer.innerHTML = '';
-                updateNotificationCounter();
-            }, 300);
-        });
-        
-        // Update notification counter
-        function updateNotificationCounter() {
-            const count = document.querySelectorAll('.notification-item').length;
-            const counterElement = document.getElementById('notificationCounter');
-            const headerCounterElement = document.getElementById('notificationCounterHeader');
-            
-            if (count > 0) {
-                counterElement.textContent = count;
-                headerCounterElement.textContent = count;
-                counterElement.style.display = '';
-            } else {
-                counterElement.style.display = 'none';
-                headerCounterElement.style.display = 'none';
-                
-                // Add "No notifications" message
-                const notificationContainer = document.getElementById('notificationContainer');
-                notificationContainer.innerHTML = `
-                    <div class="text-center py-4 text-muted">
-                        <i class="fa fa-bell-slash fa-2x mb-3"></i>
-                        <p>No notifications at this time</p>
-                    </div>
-                `;
-            }
-        }
-        
-        // Optional: Initialize tooltip for notification button
-        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
-            new bootstrap.Tooltip(document.getElementById('notificationDropdown'), {
-                title: 'Notifications',
-                placement: 'bottom'
-            });
-        }
-    });
-</script>
 {% endblock content %}

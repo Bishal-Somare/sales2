@@ -9,9 +9,24 @@
         color: #fff;
         position: fixed;
         top: 0;
-        bottom: 0; /* Extend to the bottom of the viewport */
+        bottom: 0;
         display: flex;
-        flex-direction: column; /* Stack children vertically */
+        flex-direction: column;
+        z-index: 1030; /* Higher z-index to stay above content */
+        transition: transform 0.3s ease; /* Smooth transition for sidebar */
+    }
+    
+    /* Mobile sidebar handling */
+    @media (max-width: 991.98px) {
+        .sidebar {
+            transform: translateX(-100%); /* Hide sidebar by default on mobile */
+            width: 100%; /* Full width on very small screens */
+            max-width: 280px; /* Maximum width */
+        }
+        
+        .sidebar.show-sidebar {
+            transform: translateX(0); /* Show sidebar when toggled */
+        }
     }
 
     .sidebar-header {
@@ -19,13 +34,14 @@
     }
 
     .nav-container {
-        flex: 1; /* Take up remaining space */
-        overflow-y: auto; /* Enable vertical scrolling */
-        padding: 5px; /* Add some padding */
+        flex: 1;
+        overflow-y: auto;
+        padding: 5px;
     }
 
     .nav-link {
         color: #adb5bd;
+        padding: 0.5rem 1rem; /* Consistent padding */
     }
 
     .nav-link.active {
@@ -35,10 +51,12 @@
 
     .dropdown-menu {
         background-color: #495057;
+        width: 100%; /* Full width dropdown items */
     }
 
     .dropdown-item {
         color: #adb5bd;
+        padding: 0.5rem 1rem; /* Consistent padding */
     }
 
     .dropdown-item.active, .dropdown-item:hover {
@@ -51,10 +69,27 @@
         text-align: center;
         padding: 10px;
     }
+    
+    /* Content wrapper responsive adjustment */
+    #wrapper {
+        transition: margin-left 0.3s ease;
+    }
+    
+    @media (min-width: 992px) {
+        #wrapper {
+            margin-left: 250px;
+        }
+    }
+    
+    @media (max-width: 991.98px) {
+        #wrapper {
+            margin-left: 0;
+        }
+    }
 </style>
-<aside class="sidebar position-fixed top-0 left-0 overflow-auto h-100 bg-dark text-light" id="show-side-navigation1">
-    <!-- Close Button -->
-    <button class="btn btn-dark d-md-none d-lg-none position-absolute top-0 end-0 mt-2 me-2 rounded-circle" data-close="show-side-navigation1" aria-label="Close">
+<aside class="sidebar" id="show-side-navigation1">
+    <!-- Close Button - More visible on mobile -->
+    <button class="btn btn-dark d-lg-none position-absolute top-0 end-0 mt-2 me-2 rounded-circle" id="closeSidebarBtn" aria-label="Close">
         <i class="fa fa-times text-white"></i>
     </button>
 
@@ -97,6 +132,8 @@
                     <li><a class="dropdown-item text-light" href="{% url 'category-list' %}">Categories</a></li>
                 </ul>
             </li>
+            <!-- Other menu items remain the same -->
+            <!-- ... -->
             <li class="nav-item mb-2">
                 <a class="nav-link text-light {% if request.resolver_match.url_name == 'saleslist' %}active{% endif %}" href="{% url 'saleslist' %}">
                     <i class="fa fa-shopping-bag fa-fw me-2"></i> Sales Orders
@@ -136,7 +173,7 @@
     </div>
 
     <!-- Sidebar Footer -->
-    <div class="sidebar-footer position-absolute bottom-0 w-100 text-center py-3 bg-dark border-top border-secondary">
+    <div class="sidebar-footer position-relative w-100 text-center py-3 bg-dark border-top border-secondary mt-auto">
         <a class="btn btn-danger btn-sm w-75" href="{% url 'user-logout' %}">
             <i class="fa fa-sign-out me-2"></i> Logout
         </a>
@@ -146,8 +183,40 @@
 <!-- Bootstrap Bundle with Popper.js -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Explicitly initializing Bootstrap dropdowns if needed
+    // Explicitly initializing Bootstrap dropdowns
     document.querySelectorAll('.dropdown-toggle').forEach(function(element) {
         new bootstrap.Dropdown(element);
+    });
+    
+    // Add event listener for sidebar toggle button
+    document.addEventListener('DOMContentLoaded', function() {
+        const showAsideBtn = document.querySelector('.navbar-toggler');
+        const sidebar = document.querySelector('.sidebar');
+        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+        
+        // Show sidebar on toggler click
+        if (showAsideBtn) {
+            showAsideBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('show-sidebar');
+            });
+        }
+        
+        // Close sidebar on close button click
+        if (closeSidebarBtn) {
+            closeSidebarBtn.addEventListener('click', function() {
+                sidebar.classList.remove('show-sidebar');
+            });
+        }
+        
+        // Auto-hide sidebar on smaller screens and show it on larger screens
+        function adjustSidebar() {
+            if (window.innerWidth < 992) {
+                sidebar.classList.remove('show-sidebar');
+            }
+        }
+        
+        // Initial adjustment and listen for window resize
+        adjustSidebar();
+        window.addEventListener('resize', adjustSidebar);
     });
 </script>
