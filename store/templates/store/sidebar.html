@@ -49,9 +49,16 @@
         color: #fff;
     }
 
+    /* Make the dropdown menu visible on hover */
+    .dropdown:hover > .dropdown-menu {
+        display: block;
+    }
+
+    /* Position the dropdown menu to show next to parent */
     .dropdown-menu {
         background-color: #495057;
         width: 100%; /* Full width dropdown items */
+        margin-top: 0; /* Remove margin to make it flush with parent */
     }
 
     .dropdown-item {
@@ -124,7 +131,7 @@
                 </a>
             </li>
             <li class="nav-item mb-2 dropdown">
-                <a class="nav-link text-light {% if request.resolver_match.url_name == 'productslist' %}active{% endif %} dropdown-toggle" href="#" id="productsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <a class="nav-link text-light {% if request.resolver_match.url_name == 'productslist' %}active{% endif %}" href="#" id="productsDropdown" role="button">
                     <i class="fa fa-folder me-2"></i> Products
                 </a>
                 <ul class="dropdown-menu bg-dark border-0" aria-labelledby="productsDropdown">
@@ -133,7 +140,6 @@
                 </ul>
             </li>
             <!-- Other menu items remain the same -->
-            <!-- ... -->
             <li class="nav-item mb-2">
                 <a class="nav-link text-light {% if request.resolver_match.url_name == 'saleslist' %}active{% endif %}" href="{% url 'saleslist' %}">
                     <i class="fa fa-shopping-bag fa-fw me-2"></i> Sales Orders
@@ -160,13 +166,13 @@
                 </a>
             </li>
             <li class="nav-item mb-2 dropdown">
-                <a class="nav-link text-light {% if request.resolver_match.url_name == 'profile_list' or request.resolver_match.url_name == 'customer_list' or request.resolver_match.url_name == 'vendor-list' %} active{% endif %} dropdown-toggle" href="#" id="accountsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <a class="nav-link text-light {% if request.resolver_match.url_name == 'profile_list' or request.resolver_match.url_name == 'customer_list' or request.resolver_match.url_name == 'vendor-list' %} active{% endif %}" href="#" id="accountsDropdown" role="button">
                     <i class="fa fa-users me-2"></i> Accounts
                 </a>
                 <ul class="dropdown-menu bg-dark border-0" aria-labelledby="accountsDropdown">
                     <li><a class="dropdown-item text-light {% if request.resolver_match.url_name == 'profile_list' %}active{% endif %}" href="{% url 'profile_list' %}">All Staff</a></li>
                     <li><a class="dropdown-item text-light {% if request.resolver_match.url_name == 'customer_list' %}active{% endif %}" href="{% url 'customer_list' %}">Customers</a></li>
-                    <li><a class="dropdown-item text-light {% if request.resolver_match.url_name == 'customer_list' %}active{% endif %}" href="{% url 'vendor-list' %}">Vendors</a></li>
+                    <li><a class="dropdown-item text-light {% if request.resolver_match.url_name == 'vendor-list' %}active{% endif %}" href="{% url 'vendor-list' %}">Vendors</a></li>
                 </ul>
             </li>
         </ul>
@@ -183,12 +189,6 @@
 <!-- Bootstrap Bundle with Popper.js -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Explicitly initializing Bootstrap dropdowns
-    document.querySelectorAll('.dropdown-toggle').forEach(function(element) {
-        new bootstrap.Dropdown(element);
-    });
-    
-    // Add event listener for sidebar toggle button
     document.addEventListener('DOMContentLoaded', function() {
         const showAsideBtn = document.querySelector('.navbar-toggler');
         const sidebar = document.querySelector('.sidebar');
@@ -218,5 +218,30 @@
         // Initial adjustment and listen for window resize
         adjustSidebar();
         window.addEventListener('resize', adjustSidebar);
+
+        // For mobile: Make dropdown items work on click for touchscreens
+        if ('ontouchstart' in window) {
+            document.querySelectorAll('.dropdown > .nav-link').forEach(function(dropdownToggle) {
+                dropdownToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const parent = this.parentElement;
+                    const dropdownMenu = parent.querySelector('.dropdown-menu');
+                    
+                    // Close all other dropdown menus
+                    document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
+                        if (menu !== dropdownMenu) {
+                            menu.style.display = 'none';
+                        }
+                    });
+                    
+                    // Toggle current dropdown menu
+                    if (dropdownMenu.style.display === 'block') {
+                        dropdownMenu.style.display = 'none';
+                    } else {
+                        dropdownMenu.style.display = 'block';
+                    }
+                });
+            });
+        }
     });
 </script>

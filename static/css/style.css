@@ -328,3 +328,22 @@ a {
     padding-bottom: 1.5rem !important;
   }
 }
+
+/* Make the dropdown menu visible on hover */
+.dropdown:hover > .dropdown-menu {
+  display: block;
+}
+.dropdown-menu {
+  background-color: #495057;
+  width: 100%; /* Full width dropdown items */
+}
+
+.dropdown-item {
+  color: #adb5bd;
+  padding: 0.5rem 1rem; /* Consistent padding */
+}
+
+.dropdown-item.active, .dropdown-item:hover {
+  background-color: #6c757d;
+  color: #fff;
+}
