@@ -180,9 +180,15 @@
 
     <!-- Sidebar Footer -->
     <div class="sidebar-footer position-relative w-100 text-center py-3 bg-dark border-top border-secondary mt-auto">
-        <a class="btn btn-danger btn-sm w-75" href="{% url 'user-logout' %}">
+        {% comment %} <a class="btn btn-danger btn-sm w-75" href="{% url 'user-logout' %}">
             <i class="fa fa-sign-out me-2"></i> Logout
-        </a>
+        </a> {% endcomment %}
+        <form method="post" action="{% url 'user-logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm w-75">
+                <i class="fa fa-sign-out me-2"></i> Logout
+            </button>
+        </form>
     </div>
 </aside>
 
