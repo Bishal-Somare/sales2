@@ -18,10 +18,10 @@
    }
 	.x-bold {
 		font-weight: 900;
-		text-shadow: 0px 0px 1px #000;
+		textRsadow: 0px 0px 1px #000;
    }
 	.hr, .hr-sm, .hr-lg {
-		border-bottom: 1.5px dashed #333;
+		border-bottom: 1.5px dRsed #333;
 		margin: 10px 0;
    }
 	.hr-sm {
@@ -51,7 +51,7 @@
 		width: 300px;
 		padding: 10px 20px;
 		background: #fff url(https://static.licdn.com/scds/common/u/images/apps/payments/textures/texture_paper_304x128_v1.png);
-		box-shadow: 0px 5px 10px rgba(0, 0, 0, .1);
+		boxRsadow: 0px 5px 10px rgba(0, 0, 0, .1);
    }
 	.container-ticket .ticket .head-ticket {
 		text-align: center;
@@ -302,7 +302,7 @@
 	.container-ticket .ticket .footer-ticket .title-footer {
 		font-size: 16px;
 		font-weight: 900;
-		text-shadow: 0px 1px 0px rgba(0, 0, 0, .5);
+		textRsadow: 0px 1px 0px rgba(0, 0, 0, .5);
 		text-align: center;
 		letter-spacing: 2px;
    }
@@ -316,11 +316,11 @@
 <section class="receipt container-ticket">
     <div class="ticket">
         <div class="head-ticket">
-            <p class="x-bold">InventoryMS</p>
+            <p class="x-bold">GanaSalesLite</p>
             <p class="bold">Tom Mboya Street, Tudor</p>
-            <p class="bold">Tel: +2547 00 000000</p>
+            <p class="bold">Phone: +977 9848134815</p>
             <br>
-            <p class="bold">P.O BOX. 90420-80100 MSA</p>
+            {% comment %} <p class="bold">P.O BOX. 90420-80100 MSA</p> {% endcomment %}
             <p>Date: {{ sale.date_added|date:"Y/m/d H:i:s" }}</p>
             <p>Receipt code: IMS{{ sale.id }}</p>
             <div class="code-barre">
@@ -381,24 +381,24 @@
                 <div class="hr-sm"></div>
                 <div class="col2">
                     <p>Sub Total</p>
-                    <p class="prix"><b>Ksh {{ sale.sub_total }}</b></p>
+                    <p class="prix"><b>Rs {{ sale.sub_total }}</b></p>
                 </div>
                 <br>
                 <div class="col2">
                     <p>Tax Amount</p>
-                    <p class="prix"><b>Ksh {{ sale.tax_amount }}</b></p>
+                    <p class="prix"><b>Rs {{ sale.tax_amount }}</b></p>
                 </div>
                 <div class="col2">
                     <p>Grand Total</p>
-                    <p class="prix"><b>Ksh {{ sale.grand_total }}</b></p>
+                    <p class="prix"><b>Rs {{ sale.grand_total }}</b></p>
                 </div>
                 <div class="col2">
                     <p>Amount Paid</p>
-                    <p class="prix"><b>Ksh {{ sale.amount_paid }}</b></p>
+                    <p class="prix"><b>Rs {{ sale.amount_paid }}</b></p>
                 </div>
                 <div class="col2">
                     <p>Balance</p>
-                    <p class="prix"><b>Ksh {{ sale.amount_change }}</b></p>
+                    <p class="prix"><b>Rs {{ sale.amount_change }}</b></p>
                 </div>
             </div>
             <div class="hr-lg"></div>
