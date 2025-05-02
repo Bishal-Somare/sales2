@@ -90,7 +90,7 @@ def export_purchases_to_excel(request):
     columns = [
         'ID', 'Item', 'Description', 'Vendor', 'Order Date',
         'Delivery Date', 'Quantity', 'Delivery Status',
-        'Price per item (Ksh)', 'Total Value'
+        'Price per item (Rs)', 'Total Value'
     ]
     worksheet.append(columns)
 
