@@ -68,6 +68,20 @@ class Sale(models.Model):
         Returns the total quantity of products in the sale.
         """
         return sum(detail.quantity for detail in self.saledetail_set.all())
+        
+    def get_items_display(self):
+        """
+        Returns a string of all item names in the sale, comma separated.
+        """
+        items = self.saledetail_set.all().select_related('item')
+        return ", ".join([detail.item.name for detail in items]) if items else "No items"
+        
+    def get_primary_item(self):
+        """
+        Returns the first item in the sale, if any.
+        """
+        detail = self.saledetail_set.select_related('item').first()
+        return detail.item if detail else None
 
 
 class SaleDetail(models.Model):

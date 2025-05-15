@@ -7,6 +7,7 @@ from django.http import JsonResponse, HttpResponse
 from django.urls import reverse
 from django.shortcuts import render
 from django.db import transaction
+from django.db.models import Prefetch
 
 # Class-based views
 from django.views.generic import DetailView, ListView
@@ -45,14 +46,14 @@ def export_sales_to_excel(request):
 
     # Define the column headers
     columns = [
-        'ID', 'Date', 'Customer', 'Sub Total',
+        'ID', 'Date', 'Customer', 'Items', 'Sub Total',
         'Grand Total', 'Tax Amount', 'Tax Percentage',
         'Amount Paid', 'Amount Change'
     ]
     worksheet.append(columns)
 
-    # Fetch sales data
-    sales = Sale.objects.all()
+    # Fetch sales data with prefetched related items
+    sales = Sale.objects.all().prefetch_related('saledetail_set__item')
 
     for sale in sales:
         # Convert timezone-aware datetime to naive datetime
@@ -65,6 +66,7 @@ def export_sales_to_excel(request):
             sale.id,
             date_added,
             sale.customer.phone,
+            sale.get_items_display(),
             sale.sub_total,
             sale.grand_total,
             sale.tax_amount,
@@ -148,6 +150,14 @@ class SaleListView(LoginRequiredMixin, ListView):
     context_object_name = "sales"
     paginate_by = 10
     ordering = ['date_added']
+    
+    def get_queryset(self):
+        """
+        Override get_queryset to prefetch related items for better performance
+        """
+        return Sale.objects.all().prefetch_related(
+            Prefetch('saledetail_set', queryset=SaleDetail.objects.select_related('item'))
+        ).order_by('date_added')
 
 
 class SaleDetailView(LoginRequiredMixin, DetailView):
@@ -157,6 +167,14 @@ class SaleDetailView(LoginRequiredMixin, DetailView):
 
     model = Sale
     template_name = "transactions/saledetail.html"
+    
+    def get_queryset(self):
+        """
+        Optimize query by prefetching related items
+        """
+        return Sale.objects.prefetch_related(
+            Prefetch('saledetail_set', queryset=SaleDetail.objects.select_related('item'))
+        )
 
 
 def SaleCreateView(request):
@@ -379,7 +397,9 @@ class SaleCustomerSearchView(LoginRequiredMixin,ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        queryset = super().get_queryset().select_related("customer")
+        queryset = super().get_queryset().select_related("customer").prefetch_related(
+            Prefetch('saledetail_set', queryset=SaleDetail.objects.select_related('item'))
+        )
         query = self.request.GET.get("q")
 
         if query:

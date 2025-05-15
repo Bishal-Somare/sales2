@@ -44,6 +44,7 @@
                 <th>ID</th>
                 <th>Date</th>
                 <th>Customer</th>
+                <th>Items</th>
                 <th>Sub Total</th>
                 <th>Grand Total</th>
                 <th>Tax Amount</th>
@@ -59,6 +60,7 @@
                 <td>{{ sale.id }}</td>  
                 <td>{{ sale.date_added|date:"Y-m-d H:i:s" }}</td>
                 <td>{{ sale.customer }}</td>
+                <td>{{ sale.get_items_display }}</td>
                 <td>{{ sale.sub_total }}</td>
                 <td>{{ sale.grand_total }}</td>
                 <td>{{ sale.tax_amount }}</td>
