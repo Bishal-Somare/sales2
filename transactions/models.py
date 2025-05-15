@@ -147,8 +147,8 @@ class Purchase(models.Model):
         self.total_value = self.price * self.quantity
         super().save(*args, **kwargs)
         # Update the item quantity
-        self.item.quantity += self.quantity
-        self.item.save()
+        # self.item.quantity += self.quantity
+        # self.item.save()
 
     def __str__(self):
         """
