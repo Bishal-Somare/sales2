@@ -14,6 +14,8 @@ class SaleTable(tables.Table):
             'customer',
             'items',
             'sub_total',
+            'discount_percentage',
+            'discount_amount',
             'grand_total',
             'tax_amount',
             'tax_percentage',

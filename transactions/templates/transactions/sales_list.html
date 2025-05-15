@@ -46,6 +46,8 @@
                 <th>Customer</th>
                 <th>Items</th>
                 <th>Sub Total</th>
+                 <th>Discount %</th>
+            <th>Discount Amount</th>
                 <th>Grand Total</th>
                 <th>Tax Amount</th>
                 <th>Tax Percentage</th>
@@ -62,6 +64,8 @@
                 <td>{{ sale.customer }}</td>
                 <td>{{ sale.get_items_display }}</td>
                 <td>{{ sale.sub_total }}</td>
+                 <td>{{ sale.discount_percentage }}</td>
+            <td>{{ sale.discount_amount }}</td>
                 <td>{{ sale.grand_total }}</td>
                 <td>{{ sale.tax_amount }}</td>
                 <td>{{ sale.tax_percentage }}</td>

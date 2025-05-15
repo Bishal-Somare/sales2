@@ -84,6 +84,16 @@
                                 {% endfor %}
                             </select>
                         </div>
+                         
+            <!-- New discount fields -->
+            <div class="mb-3">
+                <label for="discount_percentage" class="form-label">Discount (%)</label>
+                <input name="discount_percentage" type="number" class="form-control" id="discount_percentage" aria-label="Discount Percentage" value="0" required>
+            </div>
+            <div class="mb-3">
+                <label for="discount_amount" class="form-label">Discount Amount</label>
+                <input name="discount_amount" type="number" class="form-control" id="discount_amount" aria-label="Discount Amount" required>
+            </div>
                         <div class="mb-3">
                             <label for="sub_total" class="form-label">Subtotal</label>
                             <input name="sub_total" type="number" class="form-control" id="sub_total" aria-label="Subtotal" required>
@@ -149,6 +159,8 @@
         products: {
             customer: 0,
             sub_total: 0.00,
+            discount_percentage: 0.00,
+            discount_amount: 0.00,
             grand_total: 0.00,
             tax_amount: 0.00,
             tax_percentage: 0.00,
@@ -156,12 +168,15 @@
             amount_change: 0.00,
             items: []
         },
+
         calculate_sale: function () {
             // Subtotal of all items added
             var sub_total = 0.00;
 
-            var tax_percentage = $('input[name="tax_percentage"]').val();
+            
 
+        var discount_percentage = parseFloat($('input[name="discount_percentage"]').val()) || 0;
+        var tax_percentage = parseFloat($('input[name="tax_percentage"]').val()) || 0;
             // Calculates the total for each item
             $.each(this.products.items, function (pos, dict) {
                 dict.pos = pos;
@@ -170,14 +185,26 @@
                 sub_total += roundTo(dict.total_item, 2);
             });
 
-            // Update the sale subtotal, grand total, and tax amount
-            this.products.sub_total = roundTo(sub_total, 2);
-            this.products.grand_total = roundTo(this.products.sub_total, 2);
-            this.products.tax_amount = roundTo(this.products.sub_total * (tax_percentage / 100), 2);
+             // Update the sale subtotal
+        this.products.sub_total = roundTo(sub_total, 2);
+        
+        // Calculate discount amount
+        this.products.discount_amount = roundTo(this.products.sub_total * (discount_percentage / 100), 2);
+        
+        // Calculate price after discount
+        var after_discount = roundTo(this.products.sub_total - this.products.discount_amount, 2);
+        
+        // Calculate tax amount on the discounted price
+        this.products.tax_amount = roundTo(after_discount * (tax_percentage / 100), 2);
+        
+        // Calculate grand total (discounted price + tax)
+        this.products.grand_total = roundTo(after_discount + this.products.tax_amount, 2);
 
-            $('input[name="sub_total"]').val(this.products.sub_total);
-            $('input[name="tax_amount"]').val(this.products.tax_amount);
-            $('input[name="grand_total"]').val(this.products.grand_total);
+        // Update form fields
+        $('input[name="sub_total"]').val(this.products.sub_total);
+        $('input[name="discount_amount"]').val(this.products.discount_amount);
+        $('input[name="tax_amount"]').val(this.products.tax_amount);
+        $('input[name="grand_total"]').val(this.products.grand_total);
         },
         // Adds an item to the sale object
         add_item: function (item) {
@@ -255,6 +282,21 @@
         }).on('change', function () {
             sale.calculate_sale();
         });
+         // Add TouchSpin for discount percentage
+    $("input[name='discount_percentage']").TouchSpin({
+        min: 0,
+        max: 100,
+        step: 1,
+        decimals: 2,
+        boostat: 5,
+        maxboostedstep: 10,
+        postfix: '%'
+    }).on('change', function () {
+        sale.calculate_sale();
+    });
+    
+    // Make discount amount read-only as it's calculated automatically
+    $("input[name='discount_amount']").prop('readonly', true);
 
         // Select2 customers
         $('#searchbox_customers').select2({
@@ -425,24 +467,29 @@
             return Math.round(value * factor) / factor;
         }
 
-        // On form submit
-        $('form#form_sale').on('submit', function (event) {
-            event.preventDefault();
+       
+    // Update the form submission handler to include discount fields
+    $('form#form_sale').on('submit', function (event) {
+        event.preventDefault();
 
-            // Gather sale details
-            var amountPaid = parseFloat($('input[name="amount_paid"]').val());
-            var grandTotal = parseFloat($('input[name="grand_total"]').val());
-            var amountChange = roundTo(amountPaid - grandTotal, 2);
+        // Gather sale details
+        var amountPaid = parseFloat($('input[name="amount_paid"]').val());
+        var grandTotal = parseFloat($('input[name="grand_total"]').val());
+        var amountChange = roundTo(amountPaid - grandTotal, 2);
 
-            // Gather sale details
-            var formData = {
-                customer: $('select[name="customer"]').val(),
-                sub_total: $('input[name="sub_total"]').val(),
-                grand_total: grandTotal,
-                amount_paid: amountPaid,
-                amount_change: amountChange,
-                items: sale.products.items
-            };
+        // Gather sale details including discount fields
+        var formData = {
+            customer: $('select[name="customer"]').val(),
+            sub_total: $('input[name="sub_total"]').val(),
+            discount_percentage: $('input[name="discount_percentage"]').val(),
+            discount_amount: $('input[name="discount_amount"]').val(),
+            grand_total: grandTotal,
+            tax_percentage: $('input[name="tax_percentage"]').val(),
+            tax_amount: $('input[name="tax_amount"]').val(),
+            amount_paid: amountPaid,
+            amount_change: amountChange,
+            items: sale.products.items
+        };
 
             // Check if amount_change is present
             if (isNaN(amountChange)) {

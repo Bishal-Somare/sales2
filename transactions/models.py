@@ -26,6 +26,9 @@ class Sale(models.Model):
         decimal_places=2,
         default=0.0
     )
+    # New discount fields
+    discount_percentage = models.FloatField(default=0.0)
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     grand_total = models.DecimalField(
         max_digits=10,
         decimal_places=2,

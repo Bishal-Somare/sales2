@@ -47,6 +47,7 @@ def export_sales_to_excel(request):
     # Define the column headers
     columns = [
         'ID', 'Date', 'Customer', 'Items', 'Sub Total',
+        'Discount %', 'Discount Amount',
         'Grand Total', 'Tax Amount', 'Tax Percentage',
         'Amount Paid', 'Amount Change'
     ]
@@ -68,6 +69,8 @@ def export_sales_to_excel(request):
             sale.customer.phone,
             sale.get_items_display(),
             sale.sub_total,
+            sale.discount_percentage,
+            sale.discount_amount,
             sale.grand_total,
             sale.tax_amount,
             sale.tax_percentage,
@@ -192,7 +195,8 @@ def SaleCreateView(request):
 
                 # Validate required fields
                 required_fields = [
-                    'customer', 'sub_total', 'grand_total',
+                    'customer', 'sub_total', 'discount_percentage', 
+                    'discount_amount','grand_total',
                     'amount_paid', 'amount_change', 'items'
                 ]
                 for field in required_fields:
@@ -203,6 +207,8 @@ def SaleCreateView(request):
                 sale_attributes = {
                     "customer": Customer.objects.get(id=int(data['customer'])),
                     "sub_total": float(data["sub_total"]),
+                    "discount_percentage": float(data["discount_percentage"]),
+                    "discount_amount": float(data["discount_amount"]),
                     "grand_total": float(data["grand_total"]),
                     "tax_amount": float(data.get("tax_amount", 0.0)),
                     "tax_percentage": float(data.get("tax_percentage", 0.0)),
