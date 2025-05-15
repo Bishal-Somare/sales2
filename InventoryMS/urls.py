@@ -1,6 +1,9 @@
 from django.contrib import admin
 from django.urls import path, include
 
+#custom
+handler404 = 'accounts.views.custom_404_view'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('store.urls')),

@@ -23,6 +23,11 @@ from store.models import Item
 from accounts.models import Customer
 from .models import Sale, Purchase, SaleDetail
 from .forms import PurchaseForm
+#importing Q for the customer searching
+from django.db.models import Q
+from functools import reduce
+import operator
+
 
 
 logger = logging.getLogger(__name__)
@@ -363,3 +368,28 @@ class PurchaseDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         Allow deletion only for superusers.
         """
         return self.request.user.is_superuser
+
+
+#customer ko lagi bhanako search hai
+
+class SaleCustomerSearchView(LoginRequiredMixin,ListView):
+    model = Sale
+    template_name = "transactions/sales_list.html"  # update path if needed
+    context_object_name = "sales"
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset().select_related("customer")
+        query = self.request.GET.get("q")
+
+        if query:
+            query_list = query.split()
+            queryset = queryset.filter(
+                reduce(operator.and_, (
+                    Q(customer__first_name__icontains=q) |
+                    Q(customer__last_name__icontains=q) |
+                    Q(customer__email__icontains=q)
+                    for q in query_list
+                ))
+            )
+        return queryset

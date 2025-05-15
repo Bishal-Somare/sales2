@@ -16,7 +16,11 @@ from .views import (
     SaleDeleteView,
 
     export_sales_to_excel,
-    export_purchases_to_excel
+    export_purchases_to_excel,
+    # customer_search
+    SaleCustomerSearchView
+
+
 )
 
 # URL patterns
@@ -53,6 +57,8 @@ urlpatterns = [
     path('sales/export/', export_sales_to_excel, name='sales-export'),
     path('purchases/export/', export_purchases_to_excel,
          name='purchases-export'),
+    # customer searching ko lagi used bhayako url path hai
+    path("sales/search/", SaleCustomerSearchView.as_view(), name="sale_search")
 ]
 
 # Static media files configuration for development

@@ -20,6 +20,12 @@
                 </a>
             </div>
         </div>
+         <form class="input-group mt-4" role="search" id="searchform" action="{% url 'sale_search' %}" method="get" accept-charset="utf-8">
+    <input id="searchbox" name="q" type="text" class="form-control border-0 rounded-pill shadow-sm" placeholder="Find customers" value="{{ request.GET.q }}">
+    <button class="btn btn-outline-success rounded-pill shadow-sm" type="submit">
+        <i class="fa-solid fa-search"></i>
+    </button>
+</form>
     </div>
 </div>
 <div class="container px-3">
