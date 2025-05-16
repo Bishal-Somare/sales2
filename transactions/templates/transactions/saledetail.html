@@ -383,6 +383,10 @@
                     <p>Sub Total</p>
                     <p class="prix"><b>Rs {{ sale.sub_total }}</b></p>
                 </div>
+				 <div class="col2">
+        <p>Discount</p>
+        <p class="prix"><b>{{ sale.discount_percentage }}% (Rs {{ sale.discount_amount }})</b></p>
+    </div>
                 <br>
                 <div class="col2">
                     <p>Tax Amount</p>
