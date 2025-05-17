@@ -18,7 +18,7 @@
    }
 	.x-bold {
 		font-weight: 900;
-		textRsadow: 0px 0px 1px #000;
+		text-shadow: 0px 0px 1px #000;
    }
 	.hr, .hr-sm, .hr-lg {
 		border-bottom: 1.5px dRsed #333;
@@ -51,7 +51,7 @@
 		width: 300px;
 		padding: 10px 20px;
 		background: #fff url(https://static.licdn.com/scds/common/u/images/apps/payments/textures/texture_paper_304x128_v1.png);
-		boxRsadow: 0px 5px 10px rgba(0, 0, 0, .1);
+		box-shadow: 0px 5px 10px rgba(0, 0, 0, .1);
    }
 	.container-ticket .ticket .head-ticket {
 		text-align: center;
@@ -302,120 +302,20 @@
 	.container-ticket .ticket .footer-ticket .title-footer {
 		font-size: 16px;
 		font-weight: 900;
-		textRsadow: 0px 1px 0px rgba(0, 0, 0, .5);
+		text-shadow: 0px 1px 0px rgba(0, 0, 0, .5);
 		text-align: center;
 		letter-spacing: 2px;
    }
 </style>
 <div>
 <div class="text-center py-3">
-	<a href="#" class="btn btn-outline-success btn-sm">
+    <a href="{% url 'sales-export-detailed-pdf' %}" class="btn btn-outline-success btn-sm">
 		<i class="fa fa-print"></i> Print
-	</a>
+	  </a>
 </div>
-<section class="receipt container-ticket">
-    <div class="ticket">
-        <div class="head-ticket">
-            <p class="x-bold">GanaSalesLite</p>
-            <p class="bold">Devdaha -9 ,Ghodaha</p>
-            <p class="bold">Phone: +977 9848134815</p>
-            <br>
-            {% comment %} <p class="bold">P.O BOX. 90420-80100 MSA</p> {% endcomment %}
-            <p>Date: {{ sale.date_added|date:"Y/m/d H:i:s" }}</p>
-            <p>Receipt code: IMS{{ sale.id }}</p>
-            <div class="code-barre">
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-				<span></span>
-            </div>
-        </div>
-        <div class="body-ticket">
-            <div class="produits">
-                <div class="hr-sm"></div>
-                <div class="col2">
-                    <p>Sub Total</p>
-                    <p class="prix"><b>Rs {{ sale.sub_total }}</b></p>
-                </div>
-				 <div class="col2">
-        <p>Discount</p>
-        <p class="prix"><b>{{ sale.discount_percentage }}% (Rs {{ sale.discount_amount }})</b></p>
-    </div>
-                <br>
-                <div class="col2">
-                    <p>Tax Amount</p>
-                    <p class="prix"><b>Rs {{ sale.tax_amount }}</b></p>
-                </div>
-                <div class="col2">
-                    <p>Grand Total</p>
-                    <p class="prix"><b>Rs {{ sale.grand_total }}</b></p>
-                </div>
-                <div class="col2">
-                    <p>Amount Paid</p>
-                    <p class="prix"><b>Rs {{ sale.amount_paid }}</b></p>
-                </div>
-                <div class="col2">
-                    <p>Balance</p>
-                    <p class="prix"><b>Rs {{ sale.amount_change }}</b></p>
-                </div>
-            </div>
-            <div class="hr-lg"></div>
-            <div class="carte">
-                <p class="title-carte">Customer: {{ sale.customer.first_name }}</p>
-            </div>
-            <div class="hr-lg"></div>
-        </div>
-        <div class="footer-ticket">
-            <p class="title-footer">THANK YOU</p>
-        </div>
-    </div>
-</section>
+
+	    <!-- Include the Partial Template -->
+		{% include 'transactions/sale_ticket.html' %}
 
 </div>
 {% endblock %}
