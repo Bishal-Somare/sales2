@@ -4,7 +4,6 @@
 {% load querystring from django_tables2 %}
 {% block title %}Sales{% endblock title %}
 {% block content %}
-<!-- Header Section -->
 <div class="container my-4">
     <div class="card shadow-sm rounded p-3">
         <div class="row align-items-center">
@@ -18,71 +17,30 @@
                 <a class="btn btn-primary btn-sm rounded-pill shadow-sm" href="{% url 'sales-export' %}">
                     <i class="fa-solid fa-download"></i> Export to Excel
                 </a>
+                <a class="btn btn-secondary btn-sm rounded-pill shadow-sm" href="{% url 'sales-export-pdf' %}">
+                    <i class="fa-solid fa-download"></i> Download as Pdf
+                </a>
             </div>
         </div>
-         <form class="input-group mt-4" role="search" id="searchform" action="{% url 'sale_search' %}" method="get" accept-charset="utf-8">
-    <input id="searchbox" name="q" type="text" class="form-control border-0 rounded-pill shadow-sm" placeholder="Find customers" value="{{ request.GET.q }}">
-    <button class="btn btn-outline-success rounded-pill shadow-sm" type="submit">
-        <i class="fa-solid fa-search"></i>
-    </button>
-</form>
+        <form class="input-group mt-4" role="search" id="searchform" action="{% url 'sale_search' %}" method="get" accept-charset="utf-8">
+            <input id="searchbox" name="q" type="text" class="form-control border-0 rounded-pill shadow-sm" placeholder="Find customers" value="{{ request.GET.q }}">
+            <button class="btn btn-outline-success rounded-pill shadow-sm" type="submit">
+                <i class="fa-solid fa-search"></i>
+            </button>
+        </form>
     </div>
 </div>
+
 <div class="container px-3">
     <style>
         .table th, .table td {
             text-align: center;
         }
-        .btn-custom {
-            padding: 8px 20px;
-            margin: 4px;
-        }
     </style>
-    <table class="table table-bordered table-striped table-hover table-sm">
-        <thead class="thead-light">
-            <tr>
-                <th>ID</th>
-                <th>Date</th>
-                <th>Customer</th>
-                <th>Items</th>
-                <th>Sub Total</th>
-                 <th>Discount %</th>
-            <th>Discount Amount</th>
-                <th>Grand Total</th>
-                <th>Tax Amount</th>
-                <th>Tax Percentage</th>
-                <th>Amount Paid</th>
-                <th>Amount Change</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for sale in sales %}
-            <tr>
-                <td>{{ sale.id }}</td>  
-                <td>{{ sale.date_added|date:"Y-m-d H:i:s" }}</td>
-                <td>{{ sale.customer }}</td>
-                <td>{{ sale.get_items_display }}</td>
-                <td>{{ sale.sub_total }}</td>
-                 <td>{{ sale.discount_percentage }}</td>
-            <td>{{ sale.discount_amount }}</td>
-                <td>{{ sale.grand_total }}</td>
-                <td>{{ sale.tax_amount }}</td>
-                <td>{{ sale.tax_percentage }}</td>
-                <td>{{ sale.amount_paid }}</td>
-                <td>{{ sale.amount_change }}</td>
-                <td>
-                    <a class="btn btn-outline-info btn-sm" href="{% url 'sale-detail' sale.id %}">
-                        <i class="fa-solid fa-eye"></i> View Details
-                    </a>
-                    <a class="text-danger float-end" href="{% url 'sale-delete' sale.id %}">
-                        <i class="fa-solid fa-trash"></i> 
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+
+    <!-- Include the Partial Template -->
+    {% include 'transactions/sales_table.html' %}
+    
     <div class="d-flex justify-content-center mt-4">
         {% if is_paginated %}
         <nav aria-label="Page navigation">
@@ -100,6 +58,7 @@
                     </span>
                 </li>
                 {% endif %}
+                
                 {% for i in paginator.page_range %}
                 {% if page_obj.number == i %}
                 <li class="page-item active">
@@ -111,6 +70,7 @@
                 </li>
                 {% endif %}
                 {% endfor %}
+                
                 {% if page_obj.has_next %}
                 <li class="page-item">
                     <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">

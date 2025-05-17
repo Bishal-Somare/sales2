@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+    <style>
+        /* Ticket Container */
+
+        .container-ticket {
+            width: 320px;
+            display: flex;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            padding: 10px;
+            font-family: Arial, sans-serif;
+        }
+        
+        /* Ticket Header */
+        .head-ticket {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .head-ticket p {
+            margin: 2px;
+        }
+
+        .x-bold {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        /* Body Ticket */
+        .body-ticket {
+            margin-top: 10px;
+        }
+
+        .produits {
+            margin-bottom: 15px;
+        }
+
+        .col2 {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .col2 p {
+            margin: 0;
+        }
+
+        .prix {
+            font-weight: bold;
+        }
+
+        .hr-sm {
+            border-bottom: 1px dashed #ccc;
+            margin-bottom: 5px;
+        }
+
+        .hr-lg {
+            border-bottom: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+
+        /* Footer Ticket */
+        .footer-ticket {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .title-footer {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Print View */
+        @media print {
+            body {
+                background-color: white;
+            }
+            .container-ticket {
+                margin: 0;
+                box-shadow: none;
+                page-break-after: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="receipt">
+
+    <section class=" container-ticket">
+        <div class="ticket">
+            <div class="head-ticket">
+                <p class="x-bold">GanaSalesLite</p>
+                <p class="bold">Devdaha -9, Ghodaha</p>
+                <p class="bold">Phone: +977 9848134815</p>
+                <p>Date: {{ sale.date_added|date:"Y/m/d H:i:s" }}</p>
+                <p>Receipt Code: IMS{{ sale.id }}</p>
+                
+                <!-- Barcode Generator -->
+                <svg id="barcode"></svg>
+            </div>
+
+        <div class="body-ticket">
+            <div class="produits">
+                <div class="hr-sm"></div>
+                <div class="col2">
+                    <p>Sub Total:</p>
+                    <p class="prix">Rs {{ sale.sub_total }}</p>
+                </div>
+                <div class="col2">
+                    <p>Discount:</p>
+                    <p class="prix">{{ sale.discount_percentage }}% (Rs {{ sale.discount_amount }})</p>
+                </div>
+                <div class="col2">
+                    <p>Tax Amount:</p>
+                    <p class="prix">Rs {{ sale.tax_amount }}</p>
+                </div>
+                <div class="col2">
+                    <p>Grand Total:</p>
+                    <p class="prix">Rs {{ sale.grand_total }}</p>
+                </div>
+                <div class="col2">
+                    <p>Amount Paid:</p>
+                    <p class="prix">Rs {{ sale.amount_paid }}</p>
+                </div>
+                <div class="col2">
+                    <p>Balance:</p>
+                    <p class="prix">Rs {{ sale.amount_change }}</p>
+                </div>
+            </div>
+            <div class="hr-lg"></div>
+            <div class="carte">
+                <p class="title-carte">Customer: {{ sale.customer.first_name }}</p>
+            </div>
+            <div class="hr-lg"></div>
+        </div>
+        
+        <div class="footer-ticket">
+            <p class="title-footer">THANK YOU</p>
+        </div>
+    </div>
+</section>
+</div>
+
+<script>
+    // Generate the barcode using JsBarcode
+    const saleId = "{{ sale.id }}"; // Fetch from backend context
+    JsBarcode("#barcode", saleId, {
+        format: "CODE128",
+        lineColor: "#000",
+        width: 2,
+        height: 50,
+        displayValue: true
+    });
+</script>
+
+</body>
+</html>

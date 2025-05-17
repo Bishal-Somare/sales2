@@ -28,15 +28,88 @@ from .forms import PurchaseForm
 from django.db.models import Q
 from functools import reduce
 import operator
-
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+import pdfkit
 
 
 logger = logging.getLogger(__name__)
 
+config = pdfkit.configuration(wkhtmltopdf=r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe')
 
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
+
+def render_to_pdf(template_src, context_dict={}):
+    # Render the HTML with context data
+    html_content = render_to_string(template_src, context_dict)
+
+    options = {
+    'page-size': 'A4',
+    'encoding': 'UTF-8',
+    # 'disable-smart-shrinking': '',
+    # 'no-stop-slow-scripts': '',
+    'custom-header': [('Accept-Encoding', 'gzip')],
+    'enable-local-file-access': '',
+    'no-outline': None,
+    'orientation' : 'landscape',
+    'margin-top': '5mm',        # Adjust the top margin
+    'margin-right': '5mm',      # Adjust the right margin
+    'margin-bottom': '5mm',     # Adjust the bottom margin
+    'margin-left': '5mm',       # Adjust the left margin
+    'zoom': '1.0',       
+    'viewport-size': '1280x1024'# Adjust zoom level if necessary
+    }
+
+    
+    # PDF generation
+    pdf = pdfkit.from_string(html_content, False, configuration=config, options=options)
+
+    # Return as a response
+    if pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = 'inline; filename="report.pdf"'
+        return response
+    else:
+        return HttpResponse("PDF generation failed")
+   
+
+
+def export_detailed_sales_to_pdf(request):
+    # Fetch data with related details
+    sale = Sale.objects.prefetch_related('saledetail_set').get(id=5)
+    
+    # Absolute URL for loading static files correctly
+    base_url = request.build_absolute_uri('/')
+
+    # Pass the base_url for static and icons
+    context = {
+        'sale': sale,
+    }
+    
+
+    # Render the PDF
+    return render_to_pdf('transactions/sale_ticket.html', context)
+    
+def export_sales_to_pdf(request):
+    sales = Sale.objects.all()
+    logger.debug(f"Sales Data: {sales}")
+
+    context = { 
+        'sales': sales
+    }
+    
+    # Generate the PDF
+    pdf = render_to_pdf('transactions/sales_table.html', context)
+    
+    if pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = 'inline; filename="sales_report.pdf"'
+        return response
+    
+    logger.error("PDF generation failed.")
+    return HttpResponse("PDF generation failed.")
 
 def export_sales_to_excel(request):
     # Create a workbook and select the active worksheet.

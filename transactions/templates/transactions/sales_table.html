@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        /* Bootstrap Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: center;
+            padding: 8px;
+        }
+        thead {
+            background-color: #f2f2f2;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        /* Optional: Button styling */
+        .btn {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 5px;
+            font-size: 12px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .btn-outline-info {
+            border: 1px solid #17a2b8;
+            color: #17a2b8;
+        }
+        .btn-outline-info:hover {
+            background-color: #17a2b8;
+            color: white;
+        }
+        .text-danger {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<table class="table table-bordered table-striped table-hover table-sm">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Items</th>
+            <th>Sub Total</th>
+            <th>Discount %</th>
+            <th>Discount Amount</th>
+            <th>Grand Total</th>
+            <th>Tax Amount</th>
+            <th>Tax Percentage</th>
+            <th>Amount Paid</th>
+            <th>Amount Change</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for sale in sales %}
+        <tr>
+            <td>{{ sale.id }}</td>  
+            <td>{{ sale.date_added|date:"Y-m-d H:i:s" }}</td>
+            <td>{{ sale.customer }}</td>
+            <td>{{ sale.get_items_display }}</td>
+            <td>{{ sale.sub_total }}</td>
+            <td>{{ sale.discount_percentage }}</td>
+            <td>{{ sale.discount_amount }}</td>
+            <td>{{ sale.grand_total }}</td>
+            <td>{{ sale.tax_amount }}</td>
+            <td>{{ sale.tax_percentage }}</td>
+            <td>{{ sale.amount_paid }}</td>
+            <td>{{ sale.amount_change }}</td>
+            <td>
+                <a class="btn btn-outline-info btn-sm" href="{% url 'sale-detail' sale.id %}">View Details</a>
+                <a class="text-danger float-center" href="{% url 'sale-delete' sale.id %}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" viewBox="0 0 16 16">
+                        <path d="M5.5 5.5a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0v-6a.5.5 0 0 1 .5-.5zm2.5.5a.5.5 0 0 1 1 0v6a.5.5 0 0 1-1 0v-6zm3-.5a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0v-6a.5.5 0 0 1 .5-.5z"/>
+                        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1 0-2h3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1h3a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1z"/>
+                    </svg>
+                    
+                </a>
+                
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>
