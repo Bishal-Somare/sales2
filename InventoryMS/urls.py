@@ -13,6 +13,6 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('invoice/', include('invoice.urls')),
     path('bills/', include('bills.urls')),
-    re_path(r'^.*$', views.custom_404_view),  # this catches any non-matched URL
+    # re_path(r'^.*$', views.custom_404_view),  # this catches any non-matched URL
 
 ]
