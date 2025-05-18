@@ -5,7 +5,7 @@ import logging
 # Django core imports
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.db import transaction
 from django.db.models import Prefetch
 
@@ -76,19 +76,24 @@ def render_to_pdf(template_src, context_dict={}):
    
 
 
-def export_detailed_sales_to_pdf(request):
+def export_detailed_sales_to_pdf(request, pk):
     # Fetch data with related details
-    sale = Sale.objects.prefetch_related('saledetail_set').get(id=5)
-    
-    # Absolute URL for loading static files correctly
-    base_url = request.build_absolute_uri('/')
+    # Use get_object_or_404 and the passed 'pk'
+    # Also, ensure related objects needed by sale_ticket.html are efficiently fetched
+    sale = get_object_or_404(
+        Sale.objects.select_related('customer').prefetch_related(
+            Prefetch('saledetail_set', queryset=SaleDetail.objects.select_related('item'))
+        ),
+        id=pk # Use the pk from the URL
+    )
+    # Absolute URL for loading static files correctly (if needed by template, not obviously used by sale_ticket.html for CSS/JS)
+    # base_url = request.build_absolute_uri('/') # This line might not be necessary if all assets are CDN or inline
 
-    # Pass the base_url for static and icons
+    # Pass the sale object to the context
     context = {
         'sale': sale,
     }
     
-
     # Render the PDF
     return render_to_pdf('transactions/sale_ticket.html', context)
     
@@ -235,20 +240,15 @@ class SaleListView(LoginRequiredMixin, ListView):
             Prefetch('saledetail_set', queryset=SaleDetail.objects.select_related('item'))
         ).order_by('date_added')
 
-
 class SaleDetailView(LoginRequiredMixin, DetailView):
-    """
-    View to display details of a specific sale.
-    """
-
     model = Sale
     template_name = "transactions/saledetail.html"
     
     def get_queryset(self):
         """
-        Optimize query by prefetching related items
+        Optimize query by prefetching related items and selecting related customer.
         """
-        return Sale.objects.prefetch_related(
+        return Sale.objects.select_related('customer').prefetch_related(
             Prefetch('saledetail_set', queryset=SaleDetail.objects.select_related('item'))
         )
 

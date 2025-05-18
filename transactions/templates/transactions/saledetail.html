@@ -309,13 +309,14 @@
 </style>
 <div>
 <div class="text-center py-3">
-    <a href="{% url 'sales-export-detailed-pdf' %}" class="btn btn-outline-success btn-sm">
+    <!-- Modify this link -->
+    <a href="{% url 'sales-export-detailed-pdf' pk=object.pk %}" class="btn btn-outline-success btn-sm">
 		<i class="fa fa-print"></i> Print
 	  </a>
 </div>
 
-	    <!-- Include the Partial Template -->
-		{% include 'transactions/sale_ticket.html' %}
+	    <!-- Include the Partial Template, passing 'object' as 'sale' -->
+		{% include 'transactions/sale_ticket.html' with sale=object %}
 
 </div>
 {% endblock %}

@@ -19,6 +19,7 @@ from .views import (
     export_purchases_to_excel,
     export_sales_to_pdf,
     export_detailed_sales_to_pdf,
+
     # customer_search
     SaleCustomerSearchView
 
@@ -60,7 +61,7 @@ urlpatterns = [
     path('purchases/export/', export_purchases_to_excel,
          name='purchases-export'),
     path('sales/export-pdf/', export_sales_to_pdf, name='sales-export-pdf'),
-    path('sales/export-detailed-pdf/', export_detailed_sales_to_pdf, name='sales-export-detailed-pdf'),
+    path('sales/<int:pk>/export-detailed-pdf/', export_detailed_sales_to_pdf, name='sales-export-detailed-pdf'),
     # customer searching ko lagi used bhayako url path hai
     path("sales/search/", SaleCustomerSearchView.as_view(), name="sale_search")
 ]
