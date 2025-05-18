@@ -275,3 +275,4 @@ def custom_404_view(request, exception=None):
     Custom 404 error handler
     """
     return render(request, 'accounts/404.html', status=404)
+
