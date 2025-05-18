@@ -241,7 +241,7 @@
                         class: 'text-right',
                         targets: [2, 4],
                         render: function (data, type, row) {
-                            return parseFloat(data).toFixed(2) + ' $';
+                            return parseFloat(data).toFixed(2) + ' Rs';
                         },
                     },
                     {
@@ -397,7 +397,7 @@
             // Calculate the sale with the new quantity
             sale.calculate_sale();
             // Find the row to update the item total
-            $('td:eq(4)', tblItems.row(tr.row).node()).html(sale.products.items[tr.row].total_item + ' $');
+            $('td:eq(4)', tblItems.row(tr.row).node()).html(sale.products.items[tr.row].total_item + ' Rs');
         });
 
         // Delete all items
