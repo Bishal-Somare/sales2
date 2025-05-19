@@ -1,8 +1,8 @@
 from django.db import models
 from django_extensions.db.fields import AutoSlugField
-
 from store.models import Item
 from accounts.models import Vendor, Customer
+import decimal # Import decimal
 
 DELIVERY_CHOICES = [("P", "Pending"), ("S", "Successful")]
 
@@ -45,7 +45,7 @@ class Sale(models.Model):
         decimal_places=2,
         default=0.0
     )
-    amount_change = models.DecimalField(
+    amount_change = models.DecimalField( # This is typically change_returned = amount_paid - grand_total
         max_digits=10,
         decimal_places=2,
         default=0.0
@@ -85,6 +85,14 @@ class Sale(models.Model):
         """
         detail = self.saledetail_set.select_related('item').first()
         return detail.item if detail else None
+
+    @property
+    def amount_to_pay(self):
+        """Returns the pending amount if grand_total > amount_paid, otherwise 0."""
+        if self.grand_total is not None and self.amount_paid is not None:
+            if self.grand_total > self.amount_paid:
+                return self.grand_total - self.amount_paid
+        return decimal.Decimal('0.00')
 
 
 class SaleDetail(models.Model):
@@ -163,9 +171,6 @@ class Purchase(models.Model):
         """
         self.total_value = self.price * self.quantity
         super().save(*args, **kwargs)
-        # Update the item quantity
-        # self.item.quantity += self.quantity
-        # self.item.save()
 
     def __str__(self):
         """

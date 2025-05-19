@@ -12,6 +12,7 @@
             border: 1px solid #dddddd;
             text-align: center;
             padding: 8px;
+            vertical-align: middle; /* Align button nicely */
         }
         thead {
             background-color: #f2f2f2;
@@ -24,10 +25,11 @@
         .btn {
             display: inline-block;
             padding: 5px 10px;
-            margin: 5px;
+            margin: 2px; /* Adjusted margin */
             font-size: 12px;
             text-decoration: none;
             border-radius: 5px;
+            cursor: pointer;
         }
         .btn-outline-info {
             border: 1px solid #17a2b8;
@@ -35,6 +37,14 @@
         }
         .btn-outline-info:hover {
             background-color: #17a2b8;
+            color: white;
+        }
+        .btn-outline-success { /* Style for Payed button */
+            border: 1px solid #28a745;
+            color: #28a745;
+        }
+        .btn-outline-success:hover {
+            background-color: #28a745;
             color: white;
         }
         .text-danger {
@@ -58,35 +68,47 @@
             <th>Tax Amount</th>
             <th>Tax Percentage</th>
             <th>Amount Paid</th>
-            <th>Amount Change</th>
+            <th>Amount to Pay</th> <!-- New Column -->
+            <th>Amount Change</th> <!-- Renamed from Balance for clarity with model -->
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         {% for sale in sales %}
-        <tr>
+        <tr data-sale-id="{{ sale.id }}">
             <td>{{ sale.id }}</td>  
             <td>{{ sale.date_added|date:"Y-m-d H:i:s" }}</td>
             <td>{{ sale.customer }}</td>
             <td>{{ sale.get_items_display }}</td>
-            <td>{{ sale.sub_total }}</td>
-            <td>{{ sale.discount_percentage }}</td>
-            <td>{{ sale.discount_amount }}</td>
-            <td>{{ sale.grand_total }}</td>
-            <td>{{ sale.tax_amount }}</td>
-            <td>{{ sale.tax_percentage }}</td>
-            <td>{{ sale.amount_paid }}</td>
-            <td>{{ sale.amount_change }}</td>
+            <td>{{ sale.sub_total|floatformat:2 }}</td>
+            <td>{{ sale.discount_percentage|floatformat:2 }}</td>
+            <td>{{ sale.discount_amount|floatformat:2 }}</td>
+            <td>{{ sale.grand_total|floatformat:2 }}</td>
+            <td>{{ sale.tax_amount|floatformat:2 }}</td>
+            <td>{{ sale.tax_percentage|floatformat:2 }}</td>
+            <td class="amount-paid">{{ sale.amount_paid|floatformat:2 }}</td>
+            <td class="amount-to-pay">{{ sale.amount_to_pay|floatformat:2 }}</td> <!-- Uses model property -->
+            <td class="amount-change">
+                {% if sale.amount_change > 0 %} <!-- Only show positive change -->
+                    {{ sale.amount_change|floatformat:2 }}
+                {% else %}
+                    0.00
+                {% endif %}
+            </td>
             <td>
                 <a class="btn btn-outline-info btn-sm" href="{% url 'sale-detail' sale.id %}">View Details</a>
-                <a class="text-danger float-center" href="{% url 'sale-delete' sale.id %}">
+                {% if sale.amount_to_pay > 0 %} <!-- Show button only if there's an amount to pay -->
+                <button class="btn btn-outline-success btn-sm payed-btn" 
+                        data-sale-id="{{ sale.id }}">
+                    Payed
+                </button>
+                {% endif %}
+                <a class="text-danger float-center" href="{% url 'sale-delete' sale.id %}" title="Delete Sale">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" viewBox="0 0 16 16">
                         <path d="M5.5 5.5a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0v-6a.5.5 0 0 1 .5-.5zm2.5.5a.5.5 0 0 1 1 0v6a.5.5 0 0 1-1 0v-6zm3-.5a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0v-6a.5.5 0 0 1 .5-.5z"/>
                         <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1 0-2h3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1h3a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1z"/>
                     </svg>
-                    
                 </a>
-                
             </td>
         </tr>
         {% endfor %}

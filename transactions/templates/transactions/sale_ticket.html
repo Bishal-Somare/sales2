@@ -6,16 +6,17 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
     <style>
         /* Ticket Container */
-
         .container-ticket {
-            width: 320px;
+            width: 320px; /* Fixed width for ticket */
             display: flex;
+            flex-direction: column; /* Ensure proper layout */
             margin: 0 auto;
             border: 1px solid #ccc;
             border-radius: 8px;
             background-color: #f9f9f9;
             padding: 10px;
             font-family: Arial, sans-serif;
+            font-size: 12px; /* Base font size for ticket */
         }
         
         /* Ticket Header */
@@ -23,17 +24,14 @@
             text-align: center;
             margin-bottom: 10px;
         }
-
         .head-ticket p {
-            margin: 2px;
+            margin: 2px 0; /* Adjusted margin */
         }
-
         .x-bold {
-            font-size: 20px;
+            font-size: 18px; /* Adjusted size */
             font-weight: bold;
             color: #4CAF50;
         }
-
         .bold {
             font-weight: bold;
         }
@@ -42,33 +40,28 @@
         .body-ticket {
             margin-top: 10px;
         }
-
         .produits {
             margin-bottom: 15px;
         }
-
         .col2 {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 5px;
+            margin-bottom: 3px; /* Adjusted margin */
         }
-
         .col2 p {
             margin: 0;
         }
-
         .prix {
             font-weight: bold;
+            text-align: right; /* Align prices to the right */
         }
-
         .hr-sm {
             border-bottom: 1px dashed #ccc;
-            margin-bottom: 5px;
+            margin: 5px 0; /* Adjusted margin */
         }
-
         .hr-lg {
             border-bottom: 1px solid #ccc;
-            margin-bottom: 10px;
+            margin: 10px 0; /* Adjusted margin */
         }
 
         /* Footer Ticket */
@@ -76,73 +69,110 @@
             text-align: center;
             margin-top: 10px;
         }
-
         .title-footer {
             font-size: 14px;
             font-weight: bold;
+        }
+        .title-carte { /* Styling for customer name */
+            font-size: 12px;
+            font-weight: normal;
         }
 
         /* Print View */
         @media print {
             body {
                 background-color: white;
+                font-size: 10pt; /* Adjust print font size if needed */
             }
             .container-ticket {
+                width: 100%; /* Full width for printing */
                 margin: 0;
+                border: none;
                 box-shadow: none;
                 page-break-after: auto;
+                padding: 0;
+            }
+            #barcode {
+                max-width: 100%; /* Ensure barcode scales */
+                height: 40px; /* Adjust height for print */
             }
         }
     </style>
 </head>
 <body>
 
-<div class="receipt">
-
-    <section class=" container-ticket">
-        <div class="ticket">
-            <div class="head-ticket">
-                <p class="x-bold">GanaSalesLite</p>
-                <p class="bold">Devdaha -9, Ghodaha</p>
-                <p class="bold">Phone: +977 9848134815</p>
-                <p>Date: {{ sale.date_added|date:"Y/m/d H:i:s" }}</p>
-                <p>Receipt Code: IMS{{ sale.id }}</p>
-                
-                <!-- Barcode Generator -->
-                <svg id="barcode"></svg>
-            </div>
+<div class="receipt"> <!-- This div might be from saledetail.html context -->
+    <section class="container-ticket">
+        <!-- Removed the inner div.ticket, section.container-ticket is the main container -->
+        <div class="head-ticket">
+            <p class="x-bold">GanaSalesLite</p>
+            <p class="bold">Devdaha -9, Ghodaha</p>
+            <p class="bold">Phone: +977 9848134815</p>
+            <p>Date: {{ sale.date_added|date:"Y/m/d H:i:s" }}</p>
+            <p>Receipt Code: IMS{{ sale.id }}</p>
+            
+            <svg id="barcode"></svg>
+        </div>
 
         <div class="body-ticket">
             <div class="produits">
-                <div class="hr-sm"></div>
+                <!-- Item details would go here if needed, currently not in the template -->
+                <!-- Example: -->
+                <!-- {% for detail in sale.saledetail_set.all %}
+                <div class="col2">
+                    <p>{{ detail.quantity }} x {{ detail.item.name }}</p>
+                    <p class="prix">Rs {{ detail.total_detail|floatformat:2 }}</p>
+                </div>
+                {% endfor %} 
+                <div class="hr-sm"></div> -->
+
                 <div class="col2">
                     <p>Sub Total:</p>
-                    <p class="prix">Rs {{ sale.sub_total }}</p>
+                    <p class="prix">Rs {{ sale.sub_total|floatformat:2 }}</p>
                 </div>
                 <div class="col2">
-                    <p>Discount:</p>
-                    <p class="prix">{{ sale.discount_percentage }}% (Rs {{ sale.discount_amount }})</p>
+                    <p>Discount ({{ sale.discount_percentage|floatformat:2 }}%):</p>
+                    <p class="prix">Rs {{ sale.discount_amount|floatformat:2 }}</p>
                 </div>
+                 <div class="col2">
+                    <p>Tax ({{ sale.tax_percentage|floatformat:2 }}%):</p>
+                    <p class="prix">Rs {{ sale.tax_amount|floatformat:2 }}</p>
+                </div>
+                <div class="hr-sm"></div>
                 <div class="col2">
-                    <p>Tax Amount:</p>
-                    <p class="prix">Rs {{ sale.tax_amount }}</p>
+                    <p class="bold">Grand Total:</p>
+                    <p class="prix bold">Rs {{ sale.grand_total|floatformat:2 }}</p>
                 </div>
-                <div class="col2">
-                    <p>Grand Total:</p>
-                    <p class="prix">Rs {{ sale.grand_total }}</p>
-                </div>
+                <div class="hr-sm"></div>
                 <div class="col2">
                     <p>Amount Paid:</p>
-                    <p class="prix">Rs {{ sale.amount_paid }}</p>
+                    <p class="prix">Rs {{ sale.amount_paid|floatformat:2 }}</p>
                 </div>
+                
+                {% if sale.amount_to_pay > 0 %}
                 <div class="col2">
-                    <p>Balance:</p>
-                    <p class="prix">Rs {{ sale.amount_change }}</p>
+                    <p>Amount to Pay:</p>
+                    <p class="prix">Rs {{ sale.amount_to_pay|floatformat:2 }}</p>
                 </div>
+                {% endif %}
+
+                {% if sale.amount_change > 0 %} {# amount_change is sale.amount_paid - sale.grand_total #}
+                <div class="col2">
+                    <p>Balance Returned:</p>
+                    <p class="prix">Rs {{ sale.amount_change|floatformat:2 }}</p>
+                </div>
+                {% elif sale.amount_to_pay == 0 and sale.amount_change == 0 %} {# Paid exactly #}
+                 <div class="col2">
+                    <p>Balance Returned:</p>
+                    <p class="prix">Rs 0.00</p>
+                </div>
+                {% endif %}
+                {# If amount_to_pay > 0, balance returned is implicitly 0 and not shown as "Balance Returned" #}
+
             </div>
             <div class="hr-lg"></div>
             <div class="carte">
-                <p class="title-carte">Customer: {{ sale.customer.first_name }}</p>
+                <p class="title-carte">Customer: {{ sale.customer.first_name }} {{ sale.customer.last_name }}</p>
             </div>
             <div class="hr-lg"></div>
         </div>
@@ -150,20 +180,32 @@
         <div class="footer-ticket">
             <p class="title-footer">THANK YOU</p>
         </div>
-    </div>
-</section>
+    </section>
 </div>
 
 <script>
     // Generate the barcode using JsBarcode
-    const saleId = "{{ sale.id }}"; // Fetch from backend context
-    JsBarcode("#barcode", saleId, {
-        format: "CODE128",
-        lineColor: "#000",
-        width: 2,
-        height: 50,
-        displayValue: true
-    });
+    const saleIdForBarcode = "{{ sale.id }}"; // Ensure sale.id is a simple string/number for barcode
+    if (document.getElementById("barcode") && saleIdForBarcode) {
+        try {
+            JsBarcode("#barcode", "IMS" + saleIdForBarcode, { // Added prefix for context
+                format: "CODE128",
+                lineColor: "#000",
+                width: 1.5, // Adjusted width
+                height: 40, // Adjusted height
+                displayValue: true, // Show value below barcode
+                fontSize: 12, // Font size for displayed value
+                margin: 5 // Margin around barcode
+            });
+        } catch (e) {
+            console.error("JsBarcode error: ", e);
+            // Fallback or error message if JsBarcode fails
+            document.getElementById("barcode").innerHTML = "<p style='color:red; font-size:10px;'>Barcode generation failed.</p>";
+        }
+    } else {
+        if(!document.getElementById("barcode")) console.error("Barcode SVG element not found.");
+        if(!saleIdForBarcode) console.error("Sale ID for barcode is missing.");
+    }
 </script>
 
 </body>
