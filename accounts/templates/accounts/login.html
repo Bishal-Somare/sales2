@@ -131,7 +131,7 @@
         <span class="text-danger">{{ form.password.errors }}</span>
         {{form.password}}
         <button  type="submit" name="button">login</button>
-        <p class="message">Not registered? <a href="{% url 'user-register' %}">Create an account</a></p>
+        {% comment %} <p class="message">Not registered? <a href="{% url 'user-register' %}">Create an account</a></p> {% endcomment %}
       </form>
     </div>
   </div>
