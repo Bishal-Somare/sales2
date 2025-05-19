@@ -5,8 +5,6 @@
 {% block content %}
 <!-- Dashboard -->
 <div class="d-flex flex-column flex-lg-row h-lg-full bg-surface-secondary">
-    {% load static %}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
     <!-- Main content -->
     <div class="h-screen flex-grow-1 overflow-y-lg-auto">
         <!-- Main -->
@@ -19,7 +17,6 @@
                             text-decoration: none;
                         }
                         
-                        /* Make cards more responsive */
                         .card {
                             height: 100%;
                             transition: transform 0.2s;
@@ -29,7 +26,6 @@
                             transform: translateY(-5px);
                         }
                         
-                        /* Adjust icon sizes for different screens */
                         @media (max-width: 767.98px) {
                             .icon-shape {
                                 width: 40px;
@@ -37,36 +33,33 @@
                                 font-size: 1rem;
                             }
                             
-                            .h3 {
+                            .h3 { 
                                 font-size: 1.5rem;
                             }
                             
-                            .h6 {
+                            .h6 { 
                                 font-size: 0.8rem;
                             }
                         }
                     </style>
-                    <!-- Products Card - Col-12 on xs, col-6 on sm, col-3 on xl -->
-                    <div class="col-12 col-sm-6 col-xl-3" id="products">
+                    <!-- Products Card - (Total Quantity of Items) -->
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" id="products">
                         <a href="{% url 'productslist' %}">
                             <div class="card shadow border-0">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-8 col-sm-7">
-                                            <span class="h6 font-semibold text-muted text-sm d-block mb-2">Products</span>
-                                            <span class="h3 font-bold mb-0">{{total_items}}</span>
+                                            <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total Products Stock</span>
+                                            <span class="h3 font-bold mb-0">{{ total_items_quantity|floatformat:0 }}</span>
                                         </div>
                                         <div class="col-4 col-sm-5 text-end">
                                             <div class="icon icon-shape bg-tertiary text-white text-lg rounded-circle d-inline-flex align-items-center justify-content-center">
-                                                <i class="fa fa-clipboard-list"></i>
+                                                <i class="fa fa-boxes-stacked"></i>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="mt-2 mb-0 text-sm">
-                                        {% comment %} <span class="badge badge-pill bg-soft-success text-success me-2">
-                                            <i class="fa fa-arrow-up me-1"></i>13%
-                                        </span> {% endcomment %}
-                                        <span class="text-nowrap text-xs text-muted">Since last month</span>
+                                        <span class="text-nowrap text-xs text-muted">Total quantity in stock</span>
                                     </div>
                                 </div>
                             </div>
@@ -74,68 +67,62 @@
                     </div>
                     
                     <!-- Staff Card -->
-                    <div class="col-12 col-sm-6 col-xl-3" id="profiles">
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" id="profiles">
                         <a href="{% url 'profile_list' %}">
                             <div class="card shadow border-0">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-8 col-sm-7">
                                             <span class="h6 font-semibold text-muted text-sm d-block mb-2">Staff</span>
-                                            <span class="h3 font-bold mb-0">{{profiles_count}}</span>
+                                            <span class="h3 font-bold mb-0">{{ profiles_count }}</span>
                                         </div>
                                         <div class="col-4 col-sm-5 text-end">
                                             <div class="icon icon-shape bg-primary text-white text-lg rounded-circle d-inline-flex align-items-center justify-content-center">
-                                                <i class="fa-solid fa fa-users"></i>
+                                                <i class="fa fa-users"></i>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="mt-2 mb-0 text-sm">
-                                        {% comment %} <span class="badge badge-pill bg-soft-success text-success me-2">
-                                            <i class="fa fa-arrow-up me-1"></i>30%
-                                        </span> {% endcomment %}
-                                        <span class="text-nowrap text-xs text-muted">Since last month</span>
+                                        <span class="text-nowrap text-xs text-muted">Registered staff members</span>
                                     </div>
                                 </div>
                             </div>
                         </a>
                     </div>
                     
-                    <!-- Deliveries Card -->
-                    <div class="col-12 col-sm-6 col-xl-3" id="deliveries">
+                    <!-- Pending Deliveries Card -->
+                    {% comment %} <div class="col-12 col-sm-6 col-lg-4 col-xl-3" id="deliveries">
                         <a href="{% url 'deliveries' %}">
                             <div class="card shadow border-0">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-8 col-sm-7">
-                                            <span class="h6 font-semibold text-muted text-sm d-block mb-2">Pending deliveries</span>
-                                            <span class="h3 font-bold mb-0">{{delivery.count}}</span>
+                                            <span class="h6 font-semibold text-muted text-sm d-block mb-2">Pending Deliveries</span>
+                                            <span class="h3 font-bold mb-0">{{ delivery.count }}</span>
                                         </div>
                                         <div class="col-4 col-sm-5 text-end">
                                             <div class="icon icon-shape bg-info text-white text-lg rounded-circle d-inline-flex align-items-center justify-content-center">
-                                                <i class="fa fa-truck"></i>
+                                                <i class="fa fa-truck-fast"></i>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="mt-2 mb-0 text-sm">
-                                        {% comment %} <span class="badge badge-pill bg-soft-danger text-danger me-2">
-                                            <i class="fa fa-arrow-down me-1"></i>-5%
-                                        </span> {% endcomment %}
-                                        <span class="text-nowrap text-xs text-muted">Since last month</span>
+                                        <span class="text-nowrap text-xs text-muted">Awaiting delivery</span>
                                     </div>
                                 </div>
                             </div>
                         </a>
-                    </div>
+                    </div> {% endcomment %}
                     
-                    <!-- Sales Card -->
-                    <div class="col-12 col-sm-6 col-xl-3" id="sales">
+                    <!-- Sales Card (Total Sales Transactions) -->
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" id="sales">
                         <a href="{% url 'saleslist' %}">
                             <div class="card shadow border-0">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-8 col-sm-7">
-                                            <span class="h6 font-semibold text-muted text-sm d-block mb-2">Sales</span>
-                                            <span class="h3 font-bold mb-0">{{sales.count}}</span>
+                                            <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total Sales Orders</span>
+                                            <span class="h3 font-bold mb-0">{{ sales_count }}</span>
                                         </div>
                                         <div class="col-4 col-sm-5 text-end">
                                             <div class="icon icon-shape bg-warning text-white text-lg rounded-circle d-inline-flex align-items-center justify-content-center">
@@ -144,19 +131,42 @@
                                         </div>
                                     </div>
                                     <div class="mt-2 mb-0 text-sm">
-                                        {% comment %} <span class="badge badge-pill bg-soft-success text-success me-2">
-                                            <i class="fa fa-arrow-up me-1"></i>10%
-                                        </span> {% endcomment %}
-                                        <span class="text-nowrap text-xs text-muted">Since last month</span>
+                                        <span class="text-nowrap text-xs text-muted">Completed transactions</span>
                                     </div>
                                 </div>
                             </div>
                         </a>
                     </div>
+
+                    <!-- Accounts Receivable Card -->
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" id="receivables">
+                        <a href="{% url 'saleslist' %}?status=pending_payment">
+                            <div class="card shadow border-0">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-8 col-sm-7">
+                                            <span class="h6 font-semibold text-muted text-sm d-block mb-2">Accounts Receivable</span>
+                                            <span class="h3 font-bold mb-0">Rs {{ total_accounts_receivable|floatformat:2 }}</span>
+                                        </div>
+                                        <div class="col-4 col-sm-5 text-end">
+                                            <div class="icon icon-shape bg-success text-white text-lg rounded-circle d-inline-flex align-items-center justify-content-center">
+                                                <i class="fa fa-hand-holding-dollar"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 mb-0 text-sm">
+                                        <span class="text-nowrap text-xs text-muted">Total amount to be paid</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
                 </div>
                 
                 <!-- Charts Section - Responsive container -->
-                <div class="chart-container mt-4 mb-4">
+                <div class="chart-container-wrapper mt-4 mb-4">
+                    {% comment %} CORRECTED INCLUDE TAG BELOW {% endcomment %}
                     {% include 'store/charts.html' %}
                 </div>
             </div>
