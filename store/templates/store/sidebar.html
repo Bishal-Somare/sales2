@@ -150,7 +150,7 @@
                     <i class="fa fa-shopping-cart me-2"></i> Purchase Orders
                 </a>
             </li>
-            <li class="nav-item mb-2">
+            {% comment %} <li class="nav-item mb-2">
                 <a class="nav-link text-light {% if request.resolver_match.url_name == 'deliveries' %}active{% endif %}" href="{% url 'deliveries' %}">
                     <i class="fa-solid fa-box me-2"></i> Package
                 </a>
@@ -164,7 +164,7 @@
                 <a class="nav-link text-light {% if request.resolver_match.url_name == 'bill_list' %}active{% endif %}" href="{% url 'bill_list' %}">
                     <i class="fa-solid fa-file-invoice me-2"></i> Bills
                 </a>
-            </li>
+            </li> {% endcomment %}
             <li class="nav-item mb-2 dropdown">
                 <a class="nav-link text-light {% if request.resolver_match.url_name == 'profile_list' or request.resolver_match.url_name == 'customer_list' or request.resolver_match.url_name == 'vendor-list' %} active{% endif %}" href="#" id="accountsDropdown" role="button">
                     <i class="fa fa-users me-2"></i> Accounts
