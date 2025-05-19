@@ -1,5 +1,7 @@
 {% extends "store/base.html" %}
 {% load static %}
+{% load humanize %} <!-- OPTIONAL: For better number formatting like commas -->
+
 {% block title %}Dashboard{% endblock title %}
 
 {% block content %}
@@ -18,14 +20,21 @@
                         }
                         
                         .card {
-                            height: 100%;
-                            transition: transform 0.2s;
+                            height: 100%; /* Ensures cards in a row have same height if content varies slightly */
+                            transition: transform 0.2s ease-in-out; /* Smoother hover transition */
                         }
                         
                         .card:hover {
-                            transform: translateY(-5px);
+                            transform: translateY(-5px); /* Subtle lift on hover */
                         }
                         
+                        .icon-shape { /* Ensure consistent icon sizing */
+                            width: 48px; /* Slightly larger for better visibility */
+                            height: 48px;
+                            font-size: 1.25rem; /* Adjust icon size within the shape */
+                        }
+
+                        /* Responsive adjustments */
                         @media (max-width: 767.98px) {
                             .icon-shape {
                                 width: 40px;
@@ -33,23 +42,27 @@
                                 font-size: 1rem;
                             }
                             
-                            .h3 { 
+                            .h3.font-bold { /* Target specific h3 if needed */
                                 font-size: 1.5rem;
                             }
                             
-                            .h6 { 
+                            .h6.font-semibold { /* Target specific h6 if needed */
                                 font-size: 0.8rem;
                             }
                         }
+                        .card-body .row { /* Ensure vertical alignment for icon and text */
+                            align-items: center;
+                        }
                     </style>
-                    <!-- Products Card - (Total Quantity of Items) -->
-                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" id="products">
+
+                    <!-- Products Card -->
+                    <div class="col-12 col-sm-6 col-lg-3 col-xl-3 mb-3 mb-lg-0" id="products"> <!-- Adjusted grid for 4 cards -->
                         <a href="{% url 'productslist' %}">
                             <div class="card shadow border-0">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-8 col-sm-7">
-                                            <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total Products Stock</span>
+                                            <span class="h6 font-semibold text-muted text-sm d-block mb-2">Products Stock</span>
                                             <span class="h3 font-bold mb-0">{{ total_items_quantity|floatformat:0 }}</span>
                                         </div>
                                         <div class="col-4 col-sm-5 text-end">
@@ -66,62 +79,14 @@
                         </a>
                     </div>
                     
-                    <!-- Staff Card -->
-                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" id="profiles">
-                        <a href="{% url 'profile_list' %}">
-                            <div class="card shadow border-0">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-8 col-sm-7">
-                                            <span class="h6 font-semibold text-muted text-sm d-block mb-2">Staff</span>
-                                            <span class="h3 font-bold mb-0">{{ profiles_count }}</span>
-                                        </div>
-                                        <div class="col-4 col-sm-5 text-end">
-                                            <div class="icon icon-shape bg-primary text-white text-lg rounded-circle d-inline-flex align-items-center justify-content-center">
-                                                <i class="fa fa-users"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="mt-2 mb-0 text-sm">
-                                        <span class="text-nowrap text-xs text-muted">Registered staff members</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    
-                    <!-- Pending Deliveries Card -->
-                    {% comment %} <div class="col-12 col-sm-6 col-lg-4 col-xl-3" id="deliveries">
-                        <a href="{% url 'deliveries' %}">
-                            <div class="card shadow border-0">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-8 col-sm-7">
-                                            <span class="h6 font-semibold text-muted text-sm d-block mb-2">Pending Deliveries</span>
-                                            <span class="h3 font-bold mb-0">{{ delivery.count }}</span>
-                                        </div>
-                                        <div class="col-4 col-sm-5 text-end">
-                                            <div class="icon icon-shape bg-info text-white text-lg rounded-circle d-inline-flex align-items-center justify-content-center">
-                                                <i class="fa fa-truck-fast"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="mt-2 mb-0 text-sm">
-                                        <span class="text-nowrap text-xs text-muted">Awaiting delivery</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div> {% endcomment %}
-                    
-                    <!-- Sales Card (Total Sales Transactions) -->
-                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" id="sales">
+                    <!-- Sales Card -->
+                    <div class="col-12 col-sm-6 col-lg-3 col-xl-3 mb-3 mb-lg-0" id="sales"> <!-- Adjusted grid for 4 cards -->
                         <a href="{% url 'saleslist' %}">
                             <div class="card shadow border-0">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-8 col-sm-7">
-                                            <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total Sales Orders</span>
+                                            <span class="h6 font-semibold text-muted text-sm d-block mb-2">Sales Orders</span>
                                             <span class="h3 font-bold mb-0">{{ sales_count }}</span>
                                         </div>
                                         <div class="col-4 col-sm-5 text-end">
@@ -139,14 +104,15 @@
                     </div>
 
                     <!-- Accounts Receivable Card -->
-                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" id="receivables">
+                    <div class="col-12 col-sm-6 col-lg-3 col-xl-3 mb-3 mb-lg-0" id="receivables"> <!-- Adjusted grid for 4 cards -->
                         <a href="{% url 'saleslist' %}?status=pending_payment">
                             <div class="card shadow border-0">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-8 col-sm-7">
-                                            <span class="h6 font-semibold text-muted text-sm d-block mb-2">Accounts Receivable</span>
+                                            <span class="h6 font-semibold text-muted text-sm d-block mb-2">Receivables</span>
                                             <span class="h3 font-bold mb-0">Rs {{ total_accounts_receivable|floatformat:2 }}</span>
+                                            <!-- Optional: use humanize for commas: Rs {{ total_accounts_receivable|floatformat:2|intcomma }} -->
                                         </div>
                                         <div class="col-4 col-sm-5 text-end">
                                             <div class="icon icon-shape bg-success text-white text-lg rounded-circle d-inline-flex align-items-center justify-content-center">
@@ -162,11 +128,41 @@
                         </a>
                     </div>
 
+                    <!-- Total Profit Card -->
+                    <div class="col-12 col-sm-6 col-lg-3 col-xl-3 mb-3 mb-lg-0" id="profit"> <!-- Adjusted grid for 4 cards -->
+                        <a href="#"> <!-- Link to a detailed profit report if you create one, or remove <a> -->
+                            <div class="card shadow border-0">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-8 col-sm-7">
+                                            <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total Profit</span>
+                                            <span class="h3 font-bold mb-0">Rs {{ total_profit|floatformat:2 }}</span>
+                                            <!-- Optional: use humanize for commas: Rs {{ total_profit|floatformat:2|intcomma }} -->
+                                        </div>
+                                        <div class="col-4 col-sm-5 text-end">
+                                            <div class="icon icon-shape bg-info text-white text-lg rounded-circle d-inline-flex align-items-center justify-content-center">
+                                                <i class="fa fa-sack-dollar"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 mb-0 text-sm">
+                                        <span class="text-nowrap text-xs text-muted">Revenue minus COGS</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <!-- Other commented out cards from original file -->
+                    {% comment %}
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" id="profiles"> ... </div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" id="deliveries"> ... </div>
+                    {% endcomment %}
+
                 </div>
                 
-                <!-- Charts Section - Responsive container -->
+                <!-- Charts Section -->
                 <div class="chart-container-wrapper mt-4 mb-4">
-                    {% comment %} CORRECTED INCLUDE TAG BELOW {% endcomment %}
                     {% include 'store/charts.html' %}
                 </div>
             </div>
