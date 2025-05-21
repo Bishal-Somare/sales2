@@ -1,0 +1,264 @@
+{% load static %} {# If you plan to use static files, otherwise remove #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Due Payment Reminders</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select, input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box; /* Important for full width */
+        }
+        .button-group {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #send_single_button {
+            background-color: #007bff;
+            color: white;
+        }
+        #send_single_button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #send_all_button {
+            background-color: #28a745;
+            color: white;
+        }
+        .due-amount-display {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+        .status-message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .status-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status-message.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .status-message.warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Send Due Payment Reminders</h1>
+
+        <div class="form-group">
+            <label for="customer_select">Select Customer:</label>
+            <select id="customer_select">
+                <option value="">-- Select a Customer --</option>
+                {% for customer in customers %}
+                <option value="{{ customer.id }}">{{ customer.get_full_name }} ({{ customer.email|default:"No Email" }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div id="due_amount_container" class="due-amount-display" style="display: none;">
+            <strong>Amount Due:</strong> <span id="due_amount_value"></span>
+        </div>
+
+        <div class="button-group">
+            <button id="send_single_button" disabled>Send to Selected Customer</button>
+            <button id="send_all_button">Send to All Due Customers</button>
+        </div>
+
+        <div id="status_message_area" class="status-message" style="display: none;"></div>
+    </div>
+
+    <script>
+        // CSRF token for AJAX POST requests (Django standard way)
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        const customerSelect = document.getElementById('customer_select');
+        const dueAmountContainer = document.getElementById('due_amount_container');
+        const dueAmountValue = document.getElementById('due_amount_value');
+        const sendSingleButton = document.getElementById('send_single_button');
+        const sendAllButton = document.getElementById('send_all_button');
+        const statusMessageArea = document.getElementById('status_message_area');
+
+        function displayStatusMessage(message, type = 'info') {
+            statusMessageArea.textContent = message;
+            statusMessageArea.className = 'status-message ' + type; // success, error, info, warning
+            statusMessageArea.style.display = 'block';
+        }
+
+        customerSelect.addEventListener('change', function() {
+            const customerId = this.value;
+            if (customerId) {
+                fetch(`/notifications/get-customer-due-amount/${customerId}/`, { // Adjusted URL
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        displayStatusMessage('Error: ' + data.error, 'error');
+                        dueAmountContainer.style.display = 'none';
+                        sendSingleButton.disabled = true;
+                    } else {
+                        dueAmountValue.textContent = 'Rs. ' + data.due_amount;
+                        dueAmountContainer.style.display = 'block';
+                        // Enable button only if due amount is > 0
+                        sendSingleButton.disabled = parseFloat(data.due_amount) <= 0;
+                        // Clear previous status messages if any
+                        statusMessageArea.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    displayStatusMessage('Failed to fetch due amount. ' + error, 'error');
+                    dueAmountContainer.style.display = 'none';
+                    sendSingleButton.disabled = true;
+                });
+            } else {
+                dueAmountContainer.style.display = 'none';
+                sendSingleButton.disabled = true;
+            }
+        });
+
+        sendSingleButton.addEventListener('click', function() {
+            const customerId = customerSelect.value;
+            if (!customerId) {
+                displayStatusMessage('Please select a customer.', 'warning');
+                return;
+            }
+            
+            displayStatusMessage('Sending email...', 'info');
+            sendSingleButton.disabled = true; // Prevent multiple clicks
+
+            fetch(`{% url 'notifications:send_due_reminders_page' %}`, { // Main view handles POST
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': csrftoken 
+                },
+                body: JSON.stringify({ action: 'send_single', customer_id: customerId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayStatusMessage(data.message || data.error, data.status || (data.error ? 'error' : 'info'));
+                 // Re-fetch due amount to update button state if payment was made or status changed
+                if(data.status === 'success' || data.status === 'info') { // info might be "no balance"
+                    customerSelect.dispatchEvent(new Event('change')); // Trigger change to re-evaluate
+                } else {
+                     sendSingleButton.disabled = parseFloat(dueAmountValue.textContent.replace('Rs. ','')) <= 0;
+                }
+            })
+            .catch(error => {
+                displayStatusMessage('Request failed: ' + error, 'error');
+                sendSingleButton.disabled = parseFloat(dueAmountValue.textContent.replace('Rs. ','')) <= 0;
+            });
+        });
+
+        sendAllButton.addEventListener('click', function() {
+            if (!confirm("Are you sure you want to send reminder emails to all customers with outstanding payments?")) {
+                return;
+            }
+            displayStatusMessage('Processing... Sending emails to all due customers. This may take a moment.', 'info');
+            sendAllButton.disabled = true; // Prevent multiple clicks
+
+            fetch(`{% url 'notifications:send_due_reminders_page' %}`, { // Main view handles POST
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({ action: 'send_all' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayStatusMessage(data.message || data.error, data.status || (data.error ? 'error' : 'info'));
+                sendAllButton.disabled = false;
+                // Optionally, refresh customer specific due amount if one is selected
+                if (customerSelect.value) {
+                     customerSelect.dispatchEvent(new Event('change'));
+                }
+            })
+            .catch(error => {
+                displayStatusMessage('Request failed: ' + error, 'error');
+                sendAllButton.disabled = false;
+            });
+        });
+
+    </script>
+</body>
+</html>

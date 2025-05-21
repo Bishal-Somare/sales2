@@ -150,6 +150,11 @@
                     <i class="fa fa-shopping-cart me-2"></i> Purchase Orders
                 </a>
             </li>
+           <li class="nav-item mb-2">
+                <a class="nav-link text-light {% if request.resolver_match.app_name == 'notifications' and request.resolver_match.url_name == 'send_due_reminders_page' %}active{% endif %}" href="{% url 'notifications:send_due_reminders_page' %}">
+                    <i class="fa fa-bell fa-fw me-2"></i> Due Reminders
+                </a>
+            </li>
             {% comment %} <li class="nav-item mb-2">
                 <a class="nav-link text-light {% if request.resolver_match.url_name == 'deliveries' %}active{% endif %}" href="{% url 'deliveries' %}">
                     <i class="fa-solid fa-box me-2"></i> Package

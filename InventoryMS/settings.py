@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'transactions.apps.TransactionsConfig',
     'invoice.apps.InvoiceConfig',
     'bills.apps.BillsConfig',
+    #for notifications
+    'notifications',
 ]
 
 MIDDLEWARE = [
@@ -145,3 +147,39 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 #handling the custom 404 error page
 
 HANDLER404 = 'accounts.views.custom_404_handler' 
+
+#gmail notification smtp
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Gmail's SMTP server
+EMAIL_PORT = 587               # Port for TLS
+EMAIL_USE_TLS = True           # Use TLS (Transport Layer Security)
+
+# --- DEFINE AND ASSIGN YOUR CREDENTIALS DIRECTLY ---
+# These are now regular Python variables within this file.
+# Replace with your actual credentials.
+ACTUAL_EMAIL_USER = "ganasaleslite@gmail.com"
+ACTUAL_EMAIL_APP_PASSWORD = "jhghdpvzfuxlxgmq" # Your 16-character App Password (NO SPACES)
+
+# --- USE THESE VARIABLES FOR DJANGO'S SETTINGS ---
+EMAIL_HOST_USER = ACTUAL_EMAIL_USER
+EMAIL_HOST_PASSWORD = ACTUAL_EMAIL_APP_PASSWORD
+
+# Default "From" address for emails sent by Django.
+# It's best if this matches EMAIL_HOST_USER or an alias you've configured
+# in Gmail's "Send mail as" feature for the EMAIL_HOST_USER account.
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER # This now correctly uses the variable defined above
+
+# Email address that server error messages come from (e.g., when DEBUG=False).
+SERVER_EMAIL = EMAIL_HOST_USER       # Also use the defined variable
+
+# Optional: For receiving site error notifications if DEBUG = False
+# ADMINS = [
+#     ('Your Name', 'your_admin_email@example.com'), # If using this, replace with your details
+# ]
+# MANAGERS = ADMINS
+
+# ==============================================================================
+# END OF EMAIL CONFIGURATION
+# ==============================================================================
+
+# ... (rest of your Django settings like DATABASES, STATIC_URL, etc.) ...

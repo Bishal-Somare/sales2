@@ -14,5 +14,7 @@ urlpatterns = [
     path('invoice/', include('invoice.urls')),
     path('bills/', include('bills.urls')),
     # re_path(r'^.*$', views.custom_404_view),  # this catches any non-matched URL
+    #for notifications
+    path('notifications/', include('notifications.urls', namespace='notifications')),
 
 ]
