@@ -1,112 +1,86 @@
-{% load static %} {# If you plan to use static files, otherwise remove #}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send Due Payment Reminders</title>
+{% extends 'store/base.html' %}
+{% load static %} {# Good practice, even if not directly used in this specific file's content block #}
+
+{% block title %}Send Due Reminders{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }} {# Includes stylesheets from base.html #}
+    <!-- Page-specific styles -->
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-            color: #333;
+        /*
+           Styles from your target file are kept here.
+           Bootstrap 5 is already included via base.html, so many basic styles
+           for body, container, h1, form-group, label will be influenced by Bootstrap.
+           We can refine these further if needed, but this preserves your structure.
+        */
+        .top-left-button-container {
+            margin-bottom: 20px;
+            padding-left: 1rem; /* Align with typical container padding */
+            padding-top: 1rem;
         }
-        .container {
-            max-width: 600px;
-            margin: 20px auto;
+        /* Override container margin if needed for this specific page, or rely on base.html's content padding */
+        .reminders-container { /* Using a more specific class to avoid conflict with Bootstrap's .container */
+            max-width: 700px; /* Slightly wider for better layout */
+            margin: 0 auto 20px auto;
             padding: 20px;
-            background-color: #fff;
+            background-color: #fff; /* Assuming content area is white */
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Consistent shadow */
         }
-        h1 {
+        .reminders-container h1 {
             color: #333;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            font-size: 1.75rem; /* Responsive heading size */
         }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        select, input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box; /* Important for full width */
+        .form-group { /* Bootstrap already styles form-groups well, but keeping for specificity if needed */
+            margin-bottom: 1rem;
         }
         .button-group {
             margin-top: 20px;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column; /* Stack buttons on small screens */
+            gap: 10px;
         }
-        button {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
+        @media (min-width: 576px) { /* Apply side-by-side for sm screens and up */
+            .button-group {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            .button-group button {
+                width: auto; /* Allow buttons to size based on content */
+                flex: 1; /* Make buttons share space equally */
+            }
+            .button-group button + button {
+                margin-left: 10px; /* Add space between buttons when side-by-side */
+            }
         }
-        #send_single_button {
-            background-color: #007bff;
-            color: white;
-        }
-        #send_single_button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-        #send_all_button {
-            background-color: #28a745;
-            color: white;
-        }
+
         .due-amount-display {
             margin-top: 10px;
             padding: 10px;
-            background-color: #e9ecef;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
+            background-color: #e9ecef; /* Standard Bootstrap light gray */
+            border: 1px solid #ced4da; /* Standard Bootstrap border */
+            border-radius: .25rem; /* Bootstrap's default border-radius */
         }
-        .status-message {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 4px;
-            text-align: center;
-        }
-        .status-message.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .status-message.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .status-message.info {
-            background-color: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-        .status-message.warning {
-            background-color: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeeba;
-        }
+        /* Status messages will use Bootstrap alert classes, defined in JS */
     </style>
-</head>
-<body>
-    <div class="container">
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container-fluid px-2 px-md-4 py-3 py-md-5"> {# Use container-fluid for full width content area like dashboard #}
+    <div class="top-left-button-container">
+        <a href="{% url 'dashboard' %}" class="btn btn-success btn-sm"> {# Made button smaller for consistency #}
+            <i class="fas fa-home me-2"></i>Back to Home
+        </a>
+    </div>
+
+    <div class="reminders-container"> {# Changed class name #}
         <h1>Send Due Payment Reminders</h1>
 
         <div class="form-group">
-            <label for="customer_select">Select Customer:</label>
-            <select id="customer_select">
+            <label for="customer_select" class="form-label">Select Customer:</label> {# Added form-label for Bootstrap styling #}
+            <select id="customer_select" class="form-select">
                 <option value="">-- Select a Customer --</option>
                 {% for customer in customers %}
                 <option value="{{ customer.id }}">{{ customer.get_full_name }} ({{ customer.email|default:"No Email" }})</option>
@@ -119,146 +93,182 @@
         </div>
 
         <div class="button-group">
-            <button id="send_single_button" disabled>Send to Selected Customer</button>
-            <button id="send_all_button">Send to All Due Customers</button>
+            <button id="send_single_button" class="btn btn-primary" disabled>Send to Selected Customer</button>
+            <button id="send_all_button" class="btn btn-info">Send to All Due Customers</button> {# Changed to btn-info for variety #}
         </div>
 
-        <div id="status_message_area" class="status-message" style="display: none;"></div>
+        {# Status messages will use Bootstrap alert classes, applied via JS #}
+        <div id="status_message_area" role="alert" style="display: none;"></div>
     </div>
+</div>
+{% endblock content %}
 
+{% block javascripts %}
+    {{ block.super }} {# Includes JavaScript from base.html (like jQuery and Bootstrap bundle) #}
     <script>
-        // CSRF token for AJAX POST requests (Django standard way)
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
+        document.addEventListener('DOMContentLoaded', function() { // Ensure DOM is ready
+            // CSRF token for AJAX POST requests (Django standard way)
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
                     }
                 }
+                return cookieValue;
             }
-            return cookieValue;
-        }
-        const csrftoken = getCookie('csrftoken');
+            const csrftoken = getCookie('csrftoken');
 
-        const customerSelect = document.getElementById('customer_select');
-        const dueAmountContainer = document.getElementById('due_amount_container');
-        const dueAmountValue = document.getElementById('due_amount_value');
-        const sendSingleButton = document.getElementById('send_single_button');
-        const sendAllButton = document.getElementById('send_all_button');
-        const statusMessageArea = document.getElementById('status_message_area');
+            const customerSelect = document.getElementById('customer_select');
+            const dueAmountContainer = document.getElementById('due_amount_container');
+            const dueAmountValue = document.getElementById('due_amount_value');
+            const sendSingleButton = document.getElementById('send_single_button');
+            const sendAllButton = document.getElementById('send_all_button');
+            const statusMessageArea = document.getElementById('status_message_area');
 
-        function displayStatusMessage(message, type = 'info') {
-            statusMessageArea.textContent = message;
-            statusMessageArea.className = 'status-message ' + type; // success, error, info, warning
-            statusMessageArea.style.display = 'block';
-        }
+            function displayStatusMessage(message, type = 'info') {
+                statusMessageArea.textContent = message;
+                // Using Bootstrap alert classes
+                statusMessageArea.className = 'alert mt-3'; // Base class and margin
+                if (type === 'success') statusMessageArea.classList.add('alert-success');
+                else if (type === 'error') statusMessageArea.classList.add('alert-danger');
+                else if (type === 'warning') statusMessageArea.classList.add('alert-warning');
+                else statusMessageArea.classList.add('alert-info'); // Default to info
+                statusMessageArea.style.display = 'block';
+            }
 
-        customerSelect.addEventListener('change', function() {
-            const customerId = this.value;
-            if (customerId) {
-                fetch(`/notifications/get-customer-due-amount/${customerId}/`, { // Adjusted URL
-                    method: 'GET',
+            customerSelect.addEventListener('change', function() {
+                const customerId = this.value;
+                sendSingleButton.disabled = true; // Disable button initially
+                dueAmountContainer.style.display = 'none'; // Hide due amount
+                statusMessageArea.style.display = 'none'; // Hide previous messages
+
+                if (customerId) {
+                    dueAmountValue.textContent = 'Loading...';
+                    dueAmountContainer.style.display = 'block';
+
+                    fetch(`/notifications/get-customer-due-amount/${customerId}/`, {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                            'X-CSRFToken': csrftoken // Good practice to send CSRF for GET if server checks, though not typical
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) throw new Error(`Network response was not ok (${response.status})`);
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.error) {
+                            displayStatusMessage('Error: ' + data.error, 'error');
+                            dueAmountContainer.style.display = 'none';
+                        } else {
+                            const dueAmount = parseFloat(data.due_amount);
+                            dueAmountValue.textContent = 'Rs. ' + dueAmount.toFixed(2);
+                            dueAmountContainer.style.display = 'block';
+                            sendSingleButton.disabled = dueAmount <= 0;
+                            if (dueAmount <= 0) {
+                                displayStatusMessage( (data.customer_name || 'This customer') + ' has no outstanding dues.', 'info');
+                            } else {
+                                statusMessageArea.style.display = 'none'; // Clear if previously shown no dues
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        displayStatusMessage('Failed to fetch due amount. ' + error.message, 'error');
+                        dueAmountContainer.style.display = 'none';
+                    });
+                }
+            });
+
+            sendSingleButton.addEventListener('click', function() {
+                const customerId = customerSelect.value;
+                if (!customerId) {
+                    displayStatusMessage('Please select a customer.', 'warning');
+                    return;
+                }
+                
+                displayStatusMessage('Sending email...', 'info');
+                sendSingleButton.disabled = true;
+                sendAllButton.disabled = true;
+
+                fetch(`{% url 'notifications:send_due_reminders_page' %}`, {
+                    method: 'POST',
                     headers: {
+                        'Content-Type': 'application/json',
                         'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
-                    }
+                        'X-CSRFToken': csrftoken 
+                    },
+                    body: JSON.stringify({ action: 'send_single', customer_id: customerId })
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.error) {
-                        displayStatusMessage('Error: ' + data.error, 'error');
-                        dueAmountContainer.style.display = 'none';
-                        sendSingleButton.disabled = true;
+                    displayStatusMessage(data.message || data.error, data.status || (data.error ? 'error' : 'info'));
+                    if(data.status === 'success' || data.status === 'info') {
+                        customerSelect.dispatchEvent(new Event('change')); // Re-evaluate after action
                     } else {
-                        dueAmountValue.textContent = 'Rs. ' + data.due_amount;
-                        dueAmountContainer.style.display = 'block';
-                        // Enable button only if due amount is > 0
-                        sendSingleButton.disabled = parseFloat(data.due_amount) <= 0;
-                        // Clear previous status messages if any
-                        statusMessageArea.style.display = 'none';
+                        const currentDueText = dueAmountValue.textContent.replace('Rs. ','').replace('Loading...','0');
+                        const currentDue = parseFloat(currentDueText);
+                        sendSingleButton.disabled = isNaN(currentDue) || currentDue <= 0;
                     }
                 })
                 .catch(error => {
-                    displayStatusMessage('Failed to fetch due amount. ' + error, 'error');
-                    dueAmountContainer.style.display = 'none';
-                    sendSingleButton.disabled = true;
+                    displayStatusMessage('Request failed: ' + error.message, 'error');
+                    const currentDueText = dueAmountValue.textContent.replace('Rs. ','').replace('Loading...','0');
+                    const currentDue = parseFloat(currentDueText);
+                    sendSingleButton.disabled = isNaN(currentDue) || currentDue <= 0;
+                })
+                .finally(() => {
+                    sendAllButton.disabled = false;
                 });
-            } else {
-                dueAmountContainer.style.display = 'none';
+            });
+
+            sendAllButton.addEventListener('click', function() {
+                if (!confirm("Are you sure you want to send reminder emails to ALL customers with outstanding payments?")) {
+                    return;
+                }
+                displayStatusMessage('Processing... Sending emails to all due customers. This may take a moment.', 'info');
+                sendAllButton.disabled = true;
                 sendSingleButton.disabled = true;
-            }
-        });
 
-        sendSingleButton.addEventListener('click', function() {
-            const customerId = customerSelect.value;
-            if (!customerId) {
-                displayStatusMessage('Please select a customer.', 'warning');
-                return;
-            }
-            
-            displayStatusMessage('Sending email...', 'info');
-            sendSingleButton.disabled = true; // Prevent multiple clicks
-
-            fetch(`{% url 'notifications:send_due_reminders_page' %}`, { // Main view handles POST
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRFToken': csrftoken 
-                },
-                body: JSON.stringify({ action: 'send_single', customer_id: customerId })
-            })
-            .then(response => response.json())
-            .then(data => {
-                displayStatusMessage(data.message || data.error, data.status || (data.error ? 'error' : 'info'));
-                 // Re-fetch due amount to update button state if payment was made or status changed
-                if(data.status === 'success' || data.status === 'info') { // info might be "no balance"
-                    customerSelect.dispatchEvent(new Event('change')); // Trigger change to re-evaluate
-                } else {
-                     sendSingleButton.disabled = parseFloat(dueAmountValue.textContent.replace('Rs. ','')) <= 0;
-                }
-            })
-            .catch(error => {
-                displayStatusMessage('Request failed: ' + error, 'error');
-                sendSingleButton.disabled = parseFloat(dueAmountValue.textContent.replace('Rs. ','')) <= 0;
+                fetch(`{% url 'notifications:send_due_reminders_page' %}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({ action: 'send_all' })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    displayStatusMessage(data.message || data.error, data.status || (data.error ? 'error' : 'info'));
+                    if (customerSelect.value) {
+                        customerSelect.dispatchEvent(new Event('change')); // Re-evaluate selected customer's status
+                    } else {
+                        sendSingleButton.disabled = true;
+                    }
+                })
+                .catch(error => {
+                    displayStatusMessage('Request failed: ' + error.message, 'error');
+                    if (customerSelect.value) {
+                        const currentDueText = dueAmountValue.textContent.replace('Rs. ','').replace('Loading...','0');
+                        const currentDue = parseFloat(currentDueText);
+                        sendSingleButton.disabled = isNaN(currentDue) || currentDue <= 0;
+                    } else {
+                        sendSingleButton.disabled = true;
+                    }
+                })
+                .finally(() => {
+                    sendAllButton.disabled = false;
+                });
             });
         });
-
-        sendAllButton.addEventListener('click', function() {
-            if (!confirm("Are you sure you want to send reminder emails to all customers with outstanding payments?")) {
-                return;
-            }
-            displayStatusMessage('Processing... Sending emails to all due customers. This may take a moment.', 'info');
-            sendAllButton.disabled = true; // Prevent multiple clicks
-
-            fetch(`{% url 'notifications:send_due_reminders_page' %}`, { // Main view handles POST
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRFToken': csrftoken
-                },
-                body: JSON.stringify({ action: 'send_all' })
-            })
-            .then(response => response.json())
-            .then(data => {
-                displayStatusMessage(data.message || data.error, data.status || (data.error ? 'error' : 'info'));
-                sendAllButton.disabled = false;
-                // Optionally, refresh customer specific due amount if one is selected
-                if (customerSelect.value) {
-                     customerSelect.dispatchEvent(new Event('change'));
-                }
-            })
-            .catch(error => {
-                displayStatusMessage('Request failed: ' + error, 'error');
-                sendAllButton.disabled = false;
-            });
-        });
-
     </script>
-</body>
-</html>
+{% endblock javascripts %}

@@ -130,7 +130,7 @@
                     <i class="fa fa-tachometer-alt fa-fw me-2"></i> Dashboard
                 </a>
             </li>
-            <li class="nav-item mb-2 dropdown">
+            {% comment %} <li class="nav-item mb-2 dropdown">
                 <a class="nav-link text-light {% if request.resolver_match.url_name == 'productslist' %}active{% endif %}" href="#" id="productsDropdown" role="button">
                     <i class="fa fa-folder me-2"></i> Products
                 </a>
@@ -138,7 +138,17 @@
                     <li><a class="dropdown-item text-light {% if request.resolver_match.url_name == 'productslist' %}active{% endif %}" href="{% url 'productslist' %}">All Products</a></li>
                     <li><a class="dropdown-item text-light" href="{% url 'category-list' %}">Categories</a></li>
                 </ul>
-            </li>
+            </li> {% endcomment %}
+            <li class="nav-item mb-2">
+    <a class="nav-link text-light {% if request.resolver_match.url_name == 'productslist' %}active{% endif %}" href="{% url 'productslist' %}">
+        <i class="fa fa-box me-2"></i> All Products
+    </a>
+</li>
+<li class="nav-item mb-2">
+    <a class="nav-link text-light {% if request.resolver_match.url_name == 'category-list' %}active{% endif %}" href="{% url 'category-list' %}">
+        <i class="fa fa-tags me-2"></i> Categories
+    </a>
+</li>
             <!-- Other menu items remain the same -->
             <li class="nav-item mb-2">
                 <a class="nav-link text-light {% if request.resolver_match.url_name == 'saleslist' %}active{% endif %}" href="{% url 'saleslist' %}">
