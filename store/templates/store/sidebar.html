@@ -165,6 +165,11 @@
                     <i class="fa fa-bell fa-fw me-2"></i> Due Reminders
                 </a>
             </li>
+            <li class="nav-item mb-2">
+    <a class="nav-link text-light {% if active_icon == 'notification_settings' %}active{% endif %}" href="{% url 'notifications:notify_settings_page' %}">
+        <i class="fa fa-cogs fa-fw me-2"></i> Notification Settings
+    </a>
+</li>
             {% comment %} <li class="nav-item mb-2">
                 <a class="nav-link text-light {% if request.resolver_match.url_name == 'deliveries' %}active{% endif %}" href="{% url 'deliveries' %}">
                     <i class="fa-solid fa-box me-2"></i> Package

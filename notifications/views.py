@@ -14,6 +14,7 @@ from django.db.models.functions import Coalesce
 
 # Assuming your models are in these locations
 from accounts.models import Customer
+from django.contrib.auth.decorators import login_required
 from transactions.models import Sale # Required to calculate due amounts
 
 # Helper function to calculate total due for a customer
@@ -26,6 +27,7 @@ def _calculate_customer_total_due(customer):
     return total_due
 
 @require_GET
+
 def get_customer_due_amount_ajax(request, customer_id):
     if not request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({'error': 'Invalid request type.'}, status=400)
@@ -39,7 +41,7 @@ def get_customer_due_amount_ajax(request, customer_id):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-
+@login_required
 def send_due_reminder_page(request):
     if request.method == 'GET':
         customers = Customer.objects.all().order_by('first_name', 'last_name')
@@ -159,3 +161,12 @@ def send_due_reminder_page(request):
             return JsonResponse({'error': f'An unexpected error occurred: {str(e)}'}, status=500)
     
     return JsonResponse({'error': 'Method not allowed.'}, status=405)
+
+
+# --- New View for Real-time Notification Settings ---
+@login_required
+def notify_settings_page(request):
+    context = {
+        'active_icon': 'notification_settings', # For sidebar active state
+    }
+    return render(request, 'notifications/notify_setting.html', context)
