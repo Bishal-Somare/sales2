@@ -86,6 +86,7 @@ def dashboard(request):
     sale_dates_values_for_line = [float(sale_entry["total_sales_on_date"] or 0) for sale_entry in sale_dates_data]
 
     # Pending Deliveries
+    #project dhaki removed garako ho hai
     pending_deliveries = Delivery.objects.filter(is_delivered=False)
 
     # --- START OF PROFIT CALCULATION ---
@@ -251,11 +252,13 @@ class DeliverySearchListView(DeliveryListView):
         return result
 
 
+#deleviery chai chaina hai aba project ma 
 class DeliveryDetailView(LoginRequiredMixin, DetailView):
     model = Delivery
     template_name = "store/deliverydetail.html"
 
 
+#delevery chai chaina hai aba dhaki project ma
 class DeliveryCreateView(LoginRequiredMixin, CreateView):
     model = Delivery
     form_class = DeliveryForm
@@ -263,6 +266,7 @@ class DeliveryCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy("deliveries")
 
 
+#delevery chai chaina hai aba project ma
 class DeliveryUpdateView(LoginRequiredMixin, UpdateView):
     model = Delivery
     form_class = DeliveryForm

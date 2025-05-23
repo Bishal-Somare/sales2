@@ -95,6 +95,7 @@ class Sale(models.Model):
         return decimal.Decimal('0.00')
 
 
+#sale lai render garni ho but sales detail chai sales kai page ma huncha
 class SaleDetail(models.Model):
     """
     Represents details of a specific sale, including item and quantity.

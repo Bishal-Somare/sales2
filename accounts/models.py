@@ -125,7 +125,7 @@ class Customer(models.Model):
     address = models.TextField(max_length=256, blank=True, null=True)
     email = models.EmailField(max_length=256, blank=True, null=True)
     phone = models.CharField(max_length=30, blank=True, null=True)
-    loyalty_points = models.IntegerField(default=0)
+    # loyalty_points = models.IntegerField(default=0)
 
     class Meta:
         db_table = 'Customers'
