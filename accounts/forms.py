@@ -55,7 +55,7 @@ class CustomerForm(forms.ModelForm):
             'address',
             'email',
             'phone',
-            'loyalty_points'
+            # 'loyalty_points'
         ]
         widgets = {
             'first_name': forms.TextInput(attrs={
@@ -79,10 +79,10 @@ class CustomerForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Enter phone number'
             }),
-            'loyalty_points': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter loyalty points'
-            }),
+            # 'loyalty_points': forms.NumberInput(attrs={
+            #     'class': 'form-control',
+            #     'placeholder': 'Enter loyalty points'
+            # }),
         }
 
 
