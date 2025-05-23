@@ -65,8 +65,7 @@
             <th>Discount %</th>
             <th>Discount Amount</th>
             <th>Grand Total</th>
-            <th>Tax Amount</th>
-            <th>Tax Percentage</th>
+            <!-- Tax Amount and Tax Percentage removed -->
             <th>Amount Paid</th>
             <th>Amount to Pay</th> <!-- New Column -->
             <th>Amount Change</th> <!-- Renamed from Balance for clarity with model -->
@@ -84,8 +83,7 @@
             <td>{{ sale.discount_percentage|floatformat:2 }}</td>
             <td>{{ sale.discount_amount|floatformat:2 }}</td>
             <td>{{ sale.grand_total|floatformat:2 }}</td>
-            <td>{{ sale.tax_amount|floatformat:2 }}</td>
-            <td>{{ sale.tax_percentage|floatformat:2 }}</td>
+            <!-- sale.tax_amount and sale.tax_percentage removed -->
             <td class="amount-paid">{{ sale.amount_paid|floatformat:2 }}</td>
             <td class="amount-to-pay">{{ sale.amount_to_pay|floatformat:2 }}</td> <!-- Uses model property -->
             <td class="amount-change">

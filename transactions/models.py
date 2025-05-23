@@ -34,12 +34,12 @@ class Sale(models.Model):
         decimal_places=2,
         default=0.0
     )
-    tax_amount = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        default=0.0
-    )
-    tax_percentage = models.FloatField(default=0.0)
+    # tax_amount = models.DecimalField( # Removed
+    #     max_digits=10,
+    #     decimal_places=2,
+    #     default=0.0
+    # )
+    # tax_percentage = models.FloatField(default=0.0) # Removed
     amount_paid = models.DecimalField(
         max_digits=10,
         decimal_places=2,

@@ -116,15 +116,14 @@
 
         <div class="body-ticket">
             <div class="produits">
-                <!-- Item details would go here if needed, currently not in the template -->
-                <!-- Example: -->
-                <!-- {% for detail in sale.saledetail_set.all %}
+                <!-- Item details -->
+                 {% for detail in sale.saledetail_set.all %}
                 <div class="col2">
                     <p>{{ detail.quantity }} x {{ detail.item.name }}</p>
                     <p class="prix">Rs {{ detail.total_detail|floatformat:2 }}</p>
                 </div>
                 {% endfor %} 
-                <div class="hr-sm"></div> -->
+                <div class="hr-sm"></div>
 
                 <div class="col2">
                     <p>Sub Total:</p>
@@ -134,10 +133,7 @@
                     <p>Discount ({{ sale.discount_percentage|floatformat:2 }}%):</p>
                     <p class="prix">Rs {{ sale.discount_amount|floatformat:2 }}</p>
                 </div>
-                 <div class="col2">
-                    <p>Tax ({{ sale.tax_percentage|floatformat:2 }}%):</p>
-                    <p class="prix">Rs {{ sale.tax_amount|floatformat:2 }}</p>
-                </div>
+                <!-- Tax display removed -->
                 <div class="hr-sm"></div>
                 <div class="col2">
                     <p class="bold">Grand Total:</p>

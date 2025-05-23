@@ -72,7 +72,7 @@ def export_detailed_sales_to_pdf(request, pk):
 def export_sales_to_pdf(request):
     sales = Sale.objects.all()
     context = {'sales': sales}
-    pdf = render_to_pdf('transactions/sales_table.html', context)
+    pdf = render_to_pdf('transactions/sales_table.html', context) # This template has tax columns removed
     if pdf:
         response = HttpResponse(pdf, content_type='application/pdf')
         response['Content-Disposition'] = 'inline; filename="sales_report.pdf"'
@@ -86,7 +86,8 @@ def export_sales_to_excel(request):
     worksheet.title = 'Sales'
     columns = [
         'ID', 'Date', 'Customer', 'Items', 'Sub Total', 'Discount %', 'Discount Amount',
-        'Grand Total', 'Tax Amount', 'Tax Percentage', 'Amount Paid', 'Amount Change'
+        'Grand Total', # Tax Amount, Tax Percentage removed
+        'Amount Paid', 'Amount Change'
     ]
     worksheet.append(columns)
     sales = Sale.objects.all().prefetch_related('saledetail_set__item')
@@ -95,7 +96,7 @@ def export_sales_to_excel(request):
         worksheet.append([
             sale.id, date_added, sale.customer.phone, sale.get_items_display(),
             sale.sub_total, sale.discount_percentage, sale.discount_amount,
-            sale.grand_total, sale.tax_amount, sale.tax_percentage,
+            sale.grand_total, # sale.tax_amount, sale.tax_percentage removed
             sale.amount_paid, sale.amount_change
         ])
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -177,8 +178,8 @@ def SaleCreateView(request): # Renamed for consistency, was SaleCreateView befor
                     "discount_percentage": float(data["discount_percentage"]),
                     "discount_amount": decimal.Decimal(data["discount_amount"]),
                     "grand_total": decimal.Decimal(data["grand_total"]),
-                    "tax_amount": decimal.Decimal(data.get("tax_amount", "0.0")),
-                    "tax_percentage": float(data.get("tax_percentage", 0.0)),
+                    # "tax_amount": decimal.Decimal(data.get("tax_amount", "0.0")), # Removed
+                    # "tax_percentage": float(data.get("tax_percentage", 0.0)), # Removed
                     "amount_paid": decimal.Decimal(data["amount_paid"]),
                     "amount_change": decimal.Decimal(data["amount_change"]),
                 }

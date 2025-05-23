@@ -17,8 +17,8 @@ class SaleTable(tables.Table):
             'discount_percentage',
             'discount_amount',
             'grand_total',
-            'tax_amount',
-            'tax_percentage',
+            # 'tax_amount', # Removed
+            # 'tax_percentage', # Removed
             'amount_paid',
             'amount_change'
         )
