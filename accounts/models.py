@@ -1,10 +1,11 @@
+
 from django.db import models
 from django.contrib.auth.models import User
 
 from django_extensions.db.fields import AutoSlugField
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
-from phonenumber_field.modelfields import PhoneNumberField
+# from phonenumber_field.modelfields import PhoneNumberField # Commented out or remove if not used elsewhere
 
 
 # Define choices for profile status and roles
@@ -40,8 +41,12 @@ class Profile(models.Model):
         processors=[ResizeToFill(150, 150)],
         options={'quality': 100}
     )
-    telephone = PhoneNumberField(
-        null=True, blank=True, verbose_name='Telephone'
+    # Changed from PhoneNumberField to CharField for custom local validation
+    telephone = models.CharField(
+        max_length=15,  # Allows for some flexibility, validation will enforce 10 digits
+        null=True,
+        blank=True,
+        verbose_name='Telephone'
     )
     email = models.EmailField(
         max_length=150, blank=True, null=True, verbose_name='Email'
