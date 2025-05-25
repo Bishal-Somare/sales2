@@ -133,7 +133,7 @@ class SaleListView(LoginRequiredMixin, ListView):
     model = Sale
     template_name = "transactions/sales_list.html"
     context_object_name = "sales"
-    paginate_by = 20
+    paginate_by = 40
     ordering = ['-date_added'] # Changed to show recent sales first
     
     def get_queryset(self):
