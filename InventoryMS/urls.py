@@ -21,5 +21,5 @@ urlpatterns = [
 ]
 admin.site.site_header='GanaSalesLite'
 admin.site.site_title='GanasalesLite'
-admin.site.site_url='http://ganasaleslite.com'
+
 
