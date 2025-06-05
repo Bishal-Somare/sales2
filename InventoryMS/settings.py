@@ -136,6 +136,6 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "ganasaleslite@gmail.com" # Your actual email
-EMAIL_HOST_PASSWORD = "jhghdpvzfuxlxgmq"   # Your actual app password for Gmail
+EMAIL_HOST_PASSWORD =:""  # Your actual app password for Gmail
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
